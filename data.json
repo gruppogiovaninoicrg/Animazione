@@ -1,0 +1,1090 @@
+{
+  "usciteTot": [
+    {
+      "titolo": "Parco degli alberi parlanti",
+      "descrizione": "La Grande Gita tanto attesa! \nUna giornata intera in questo fantastico parco",
+      "immagineUrl": "./img/uscite/ParcoAlberiParlanti.webp",
+      "data": "23/07/2026",
+      "luogo": "Treviso",
+      "fascia_eta": [
+        "1°elementare",
+        "2°elementare",
+        "3°elementare",
+        "4°elementare",
+        "5°elementare",
+        "medie"
+      ],
+      "sito_web": "https://live.alcuni.it/home-parco/",
+      "data_apertura_iscrizione": "15/07/2026",
+      "data_chiusura_iscrizione": "22/07/2026",
+      "link_autorizzazione": "https://drive.google.com/file/d/1uCayYpmMdJ-XXRg3gm1JdNNGblilHDO2/view?usp=drive_link"
+    },
+    {
+      "titolo": "Pompieri",
+      "descrizione": "Incontro educativo con i vigili del fuoco per imparare la sicurezza antincendio e il pronto soccorso.",
+      "immagineUrl": "./img/uscite/pompieri.webp",
+      "data": "15/07/2026",
+      "luogo": "Caserma Vigili del Fuoco – Rovigo",
+      "fascia_eta": [
+        "1°elementare",
+        "2°elementare",
+        "3°elementare"
+      ],
+      "sito_web": "https://www.vigilfuoco.it",
+      "data_apertura_iscrizione": "07/07/2026",
+      "data_chiusura_iscrizione": "14/07/2026",
+      "link_autorizzazione": "https://drive.google.com/file/d/1uCayYpmMdJ-XXRg3gm1JdNNGblilHDO2/view?usp=drive_link"
+    },
+    {
+      "titolo": "Castelbeach",
+      "descrizione": "Una giornata al parco acquatico tra scivoli, giochi e tanto divertimento sotto il sole.",
+      "immagineUrl": "./img/uscite/Castelbeach.webp",
+      "data": "16/07/2026",
+      "luogo": "Castelbeach – Castelnovo Bariano (RO)",
+      "fascia_eta": [
+        "4°elementare",
+        "5°elementare",
+        "medie"
+      ],
+      "sito_web": "https://www.castelbeach.it",
+      "data_apertura_iscrizione": "08/07/2026",
+      "data_chiusura_iscrizione": "15/07/2026",
+      "link_autorizzazione": "https://drive.google.com/file/d/1uCayYpmMdJ-XXRg3gm1JdNNGblilHDO2/view?usp=drive_link"
+    },
+    {
+      "titolo": "Claero",
+      "descrizione": "",
+      "immagineUrl": "./img/uscite/Claero.webp",
+      "data": "10/07/2026",
+      "luogo": "Cambio",
+      "fascia_eta": [
+        "1°elementare",
+        "2°elementare",
+        "3°elementare",
+        "4°elementare",
+        "5°elementare",
+        "medie"
+      ],
+      "sito_web": "",
+      "data_apertura_iscrizione": "02/07/2026",
+      "data_chiusura_iscrizione": "09/07/2026",
+      "link_autorizzazione": ""
+    },
+    {
+      "titolo": "Diamante nero",
+      "descrizione": "",
+      "immagineUrl": "./img/uscite/DiamanteNero.webp",
+      "data": "03/07/2026",
+      "luogo": "Ca' Emo",
+      "fascia_eta": [],
+      "sito_web": "",
+      "data_apertura_iscrizione": "29/06/2026",
+      "data_chiusura_iscrizione": "02/07/2026",
+      "link_autorizzazione": ""
+    },
+    {
+      "titolo": "Anni Azzurri",
+      "descrizione": "",
+      "immagineUrl": "./img/uscite/AnniAzzurri.webp",
+      "data": "06/07/2026",
+      "luogo": "",
+      "fascia_eta": [
+        "1°elementare",
+        "2°elementare",
+        "3°elementare"
+      ],
+      "sito_web": "",
+      "data_apertura_iscrizione": "29/06/2026",
+      "data_chiusura_iscrizione": "05/07/2026",
+      "link_autorizzazione": ""
+    },
+    {
+      "titolo": "Anni Azzurri",
+      "descrizione": "",
+      "immagineUrl": "./img/uscite/AnniAzzurri.webp",
+      "data": "16/07/2026",
+      "luogo": "",
+      "fascia_eta": [
+        "1°elementare",
+        "2°elementare",
+        "3°elementare"
+      ],
+      "sito_web": "",
+      "data_apertura_iscrizione": "08/07/2026",
+      "data_chiusura_iscrizione": "15/07/2026",
+      "link_autorizzazione": ""
+    }
+  ],
+  "laboratoriTot": [
+    {
+      "titolo": "Acquario in bottiglia",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "29/06/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Pasta di sale",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "29/06/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Braccialetti",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "29/06/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Bottiglia con stelle",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "29/06/2026",
+      "difficoltà": "difficile"
+    },
+    {
+      "titolo": "Rosa con dischetti",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "29/06/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Astrolabio",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "29/06/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Cornice fotografica",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "29/06/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Segnalibro",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Portachiavi",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Collage",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Bigliettino Pop-Up",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Slime",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Farfalle con mollette",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Quadretto di fili",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "difficile"
+    },
+    {
+      "titolo": "Dragone cinese",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "pesce volante",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Lanterna",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "06/07/2026",
+      "difficoltà": "difficile"
+    },
+    {
+      "titolo": "Porta canovacci",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "13/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Sale colorato",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "13/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Bastone della pioggia",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "13/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Collana di pasta",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "13/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Disegno che si apre",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "13/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Catenelle",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "13/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Vaso di vetro",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "13/07/2026",
+      "difficoltà": "difficile"
+    },
+    {
+      "titolo": "Subacqueo",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "20/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Stickers",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "20/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "iPad",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "20/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Acchiappasogni",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "20/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Indumento tie-dye",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "20/07/2026",
+      "difficoltà": "difficile"
+    },
+    {
+      "titolo": "Mollette con disegni",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "20/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Trottola",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "20/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Pala eolica",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "27/07/2026",
+      "difficoltà": "difficile"
+    },
+    {
+      "titolo": "Elettricità",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "27/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Libretto che scorre",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "27/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Guanto vedente",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "27/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Ballerino di carta",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "27/07/2026",
+      "difficoltà": "facile"
+    },
+    {
+      "titolo": "Torcia e pesci",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "27/07/2026",
+      "difficoltà": "media"
+    },
+    {
+      "titolo": "Distributore elefantino",
+      "descrizione": "",
+      "immagineUrl": "",
+      "settimana": "27/07/2026",
+      "difficoltà": "facile"
+    }
+  ],
+  "sportTot": [
+    {
+      "titolo": "Pallavolo",
+      "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
+      "immagineUrl": "./img/sport/pallavolo.webp",
+      "data": "29/06/2026",
+      "associazione": "Pallavolo C.R.G."
+    },
+    {
+      "titolo": "Pallavolo",
+      "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
+      "immagineUrl": "./img/sport/pallavolo.webp",
+      "data": "06/07/2026",
+      "associazione": "Pallavolo C.R.G."
+    },
+    {
+      "titolo": "Pallavolo",
+      "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
+      "immagineUrl": "./img/sport/pallavolo.webp",
+      "data": "13/07/2026",
+      "associazione": "Pallavolo C.R.G."
+    },
+    {
+      "titolo": "Pallavolo",
+      "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
+      "immagineUrl": "./img/sport/pallavolo.webp",
+      "data": "20/07/2026",
+      "associazione": "Pallavolo C.R.G."
+    },
+    {
+      "titolo": "Pallavolo",
+      "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
+      "immagineUrl": "./img/sport/pallavolo.webp",
+      "data": "27/07/2026",
+      "associazione": "Pallavolo C.R.G."
+    },
+    {
+      "titolo": "Rugby",
+      "descrizione": "Introduzione al rugby con esercizi di coordinazione e minipartite.",
+      "immagineUrl": "./img/sport/rugby.webp",
+      "data": "29/06/2026",
+      "associazione": "A.S.D. Rugby Villadose"
+    },
+    {
+      "titolo": "Rugby",
+      "descrizione": "Introduzione al rugby con esercizi di coordinazione e minipartite.",
+      "immagineUrl": "./img/sport/rugby.webp",
+      "data": "13/07/2026",
+      "associazione": "A.S.D. Rugby Villadose"
+    },
+    {
+      "titolo": "Rugby",
+      "descrizione": "Introduzione al rugby con esercizi di coordinazione e minipartite.",
+      "immagineUrl": "./img/sport/rugby.webp",
+      "data": "27/07/2026",
+      "associazione": "A.S.D. Rugby Villadose"
+    },
+    {
+      "titolo": "Calcio",
+      "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
+      "immagineUrl": "./img/sport/calcio.webp",
+      "data": "29/06/2026",
+      "associazione": "NOI C.R.G."
+    },
+    {
+      "titolo": "Calcio",
+      "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
+      "immagineUrl": "./img/sport/calcio.webp",
+      "data": "06/07/2026",
+      "associazione": "NOI C.R.G."
+    },
+    {
+      "titolo": "Calcio",
+      "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
+      "immagineUrl": "./img/sport/calcio.webp",
+      "data": "13/07/2026",
+      "associazione": "NOI C.R.G."
+    },
+    {
+      "titolo": "Calcio",
+      "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
+      "immagineUrl": "./img/sport/calcio.webp",
+      "data": "20/07/2026",
+      "associazione": "NOI C.R.G."
+    },
+    {
+      "titolo": "Calcio",
+      "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
+      "immagineUrl": "./img/sport/calcio.webp",
+      "data": "27/07/2026",
+      "associazione": "NOI C.R.G."
+    }
+  ],
+  "ospitiTot": [
+    {
+      "titolo": "Trinity Music School",
+      "descrizione": "Scuola di musica di Rovigo",
+      "immagineUrl": "./img/ospiti/trinity.webp",
+      "data": "07/07/2026",
+      "sito_web": "https://www.trinitycollege.com"
+    },
+    {
+      "titolo": "Trinity Music School",
+      "descrizione": "Scuola di musica di Rovigo",
+      "immagineUrl": "./img/ospiti/trinity.webp",
+      "data": "21/07/2026",
+      "sito_web": "https://www.trinitycollege.com"
+    },
+    {
+      "titolo": "Gruppo Astrofili Polesani",
+      "descrizione": "Il gruppo astrofili porta telescopi e racconta le meraviglie del cielo: pianeti, stelle e costellazioni.",
+      "immagineUrl": "./img/ospiti/AstrofiliPolesani.webp",
+      "data": "08/07/2026",
+      "sito_web": "https://www.uai.it"
+    },
+    {
+      "titolo": "Apicoltura locale",
+      "descrizione": "Un apicoltore spiega la vita delle api, mostra i favi e porta un assaggio di miele fresco.",
+      "immagineUrl": "",
+      "data": "29/07/2026",
+      "sito_web": ""
+    },
+    {
+      "titolo": "Dog therapy",
+      "descrizione": "",
+      "immagineUrl": "",
+      "data": "14/07/2026",
+      "sito_web": ""
+    },
+    {
+      "titolo": "Dog therapy",
+      "descrizione": "",
+      "immagineUrl": "",
+      "data": "22/07/2026",
+      "sito_web": ""
+    }
+  ],
+  "calendarioTot": [
+    {
+      "data_inizio": "29/06/2026",
+      "planning": [
+        {
+          "giorno": 1,
+          "el1": {
+            "testo": "Giornata tipo"
+          },
+          "el2": {
+            "testo": "Giornata tipo"
+          },
+          "el3": {
+            "testo": "Giornata tipo"
+          },
+          "el4": {
+            "testo": "Giornata tipo"
+          },
+          "el5": {
+            "testo": "Giornata tipo"
+          },
+          "md": {
+            "testo": "Giornata tipo"
+          }
+        },
+        {
+          "giorno": 2,
+          "el1": {
+            "testo": "Sport Pallavolo"
+          },
+          "el2": {
+            "testo": "Sport Pallavolo"
+          },
+          "el3": {
+            "testo": "Sport Pallavolo"
+          },
+          "el4": {
+            "testo": "Sport Pallavolo"
+          },
+          "el5": {
+            "testo": "Sport Pallavolo"
+          },
+          "md": {
+            "testo": "Sport Pallavolo"
+          }
+        },
+        {
+          "giorno": 3,
+          "el1": {
+            "testo": "Sport Rugby"
+          },
+          "el2": {
+            "testo": "Sport Rugby"
+          },
+          "el3": {
+            "testo": "Sport Rugby"
+          },
+          "el4": {
+            "testo": "Sport Rugby"
+          },
+          "el5": {
+            "testo": "Sport Rugby"
+          },
+          "md": {
+            "testo": "Sport Rugby"
+          }
+        },
+        {
+          "giorno": 4,
+          "el1": {
+            "testo": "Attività Storia"
+          },
+          "el2": {
+            "testo": "Attività Storia"
+          },
+          "el3": {
+            "testo": "Attività Storia"
+          },
+          "el4": {
+            "testo": "Attività Storia"
+          },
+          "el5": {
+            "testo": "Attività Storia"
+          },
+          "md": {
+            "testo": "Attività Storia"
+          }
+        },
+        {
+          "giorno": 5,
+          "el1": {
+            "testo": "Sport Calcio / Uscita Diamante Nero"
+          },
+          "el2": {
+            "testo": "Sport Calcio / Uscita Diamante Nero"
+          },
+          "el3": {
+            "testo": "Sport Calcio / Uscita Diamante Nero"
+          },
+          "el4": {
+            "testo": "Sport Calcio / Uscita Diamante Nero"
+          },
+          "el5": {
+            "testo": "Sport Calcio / Uscita Diamante Nero"
+          },
+          "md": {
+            "testo": "Sport Calcio / Uscita Diamante Nero"
+          }
+        }
+      ]
+    },
+    {
+      "data_inizio": "06/07/2026",
+      "planning": [
+        {
+          "giorno": 1,
+          "el1": {
+            "testo": "Sport Pallavolo / Uscita Anni Azzurri"
+          },
+          "el2": {
+            "testo": "Sport Pallavolo / Uscita Anni Azzurri"
+          },
+          "el3": {
+            "testo": "Sport Pallavolo / Uscita Anni Azzurri"
+          },
+          "el4": {
+            "testo": "Sport Pallavolo"
+          },
+          "el5": {
+            "testo": "Sport Pallavolo"
+          },
+          "md": {
+            "testo": "Sport Pallavolo"
+          }
+        },
+        {
+          "giorno": 2,
+          "el1": {
+            "testo": "Ospite Trinity Musich School"
+          },
+          "el2": {
+            "testo": "Ospite Trinity Musich School"
+          },
+          "el3": {
+            "testo": "Ospite Trinity Musich School"
+          },
+          "el4": {
+            "testo": "Ospite Trinity Musich School"
+          },
+          "el5": {
+            "testo": "Ospite Trinity Musich School"
+          },
+          "md": {
+            "testo": "Ospite Trinity Musich School"
+          }
+        },
+        {
+          "giorno": 3,
+          "el1": {
+            "testo": "Ospite Gruppo Astrofili Polesani"
+          },
+          "el2": {
+            "testo": "Ospite Gruppo Astrofili Polesani"
+          },
+          "el3": {
+            "testo": "Ospite Gruppo Astrofili Polesani"
+          },
+          "el4": {
+            "testo": "Ospite Gruppo Astrofili Polesani"
+          },
+          "el5": {
+            "testo": "Ospite Gruppo Astrofili Polesani"
+          },
+          "md": {
+            "testo": "Ospite Gruppo Astrofili Polesani"
+          }
+        },
+        {
+          "giorno": 4,
+          "el1": {
+            "testo": "Attività Storia"
+          },
+          "el2": {
+            "testo": "Attività Storia"
+          },
+          "el3": {
+            "testo": "Attività Storia"
+          },
+          "el4": {
+            "testo": "Attività Storia"
+          },
+          "el5": {
+            "testo": "Attività Storia"
+          },
+          "md": {
+            "testo": "Attività Storia"
+          }
+        },
+        {
+          "giorno": 5,
+          "el1": {
+            "testo": "Sport Calcio / Uscita Claero"
+          },
+          "el2": {
+            "testo": "Sport Calcio / Uscita Claero"
+          },
+          "el3": {
+            "testo": "Sport Calcio / Uscita Claero"
+          },
+          "el4": {
+            "testo": "Sport Calcio / Uscita Claero"
+          },
+          "el5": {
+            "testo": "Sport Calcio / Uscita Claero"
+          },
+          "md": {
+            "testo": "Sport Calcio / Uscita Claero"
+          }
+        }
+      ]
+    },
+    {
+      "data_inizio": "13/07/2026",
+      "planning": [
+        {
+          "giorno": 1,
+          "el1": {
+            "testo": "Sport Rugby / Laboratorio Cucia"
+          },
+          "el2": {
+            "testo": "Sport Rugby / Laboratorio Cucia"
+          },
+          "el3": {
+            "testo": "Sport Rugby / Laboratorio Cucia"
+          },
+          "el4": {
+            "testo": "Sport Rugby / Laboratorio Cucia"
+          },
+          "el5": {
+            "testo": "Sport Rugby / Laboratorio Cucia"
+          },
+          "md": {
+            "testo": "Sport Rugby / Laboratorio Cucia"
+          }
+        },
+        {
+          "giorno": 2,
+          "el1": {
+            "testo": "Sport Pallavolo"
+          },
+          "el2": {
+            "testo": "Sport Pallavolo"
+          },
+          "el3": {
+            "testo": "Sport Pallavolo"
+          },
+          "el4": {
+            "testo": "Sport Pallavolo"
+          },
+          "el5": {
+            "testo": "Sport Pallavolo"
+          },
+          "md": {
+            "testo": "Sport Pallavolo"
+          }
+        },
+        {
+          "giorno": 3,
+          "el1": {
+            "testo": "Sport Calcio / Uscita Pompieri"
+          },
+          "el2": {
+            "testo": "Sport Calcio / Uscita Pompieri"
+          },
+          "el3": {
+            "testo": "Sport Calcio / Uscita Pompieri"
+          },
+          "el4": {
+            "testo": "Sport Calcio"
+          },
+          "el5": {
+            "testo": "Sport Calcio"
+          },
+          "md": {
+            "testo": "Sport Calcio"
+          }
+        },
+        {
+          "giorno": 4,
+          "el1": {
+            "testo": "Uscita Anni Azzurri"
+          },
+          "el2": {
+            "testo": "Uscita Anni Azzurri"
+          },
+          "el3": {
+            "testo": "Uscita Anni Azzurri"
+          },
+          "el4": {
+            "testo": "Uscita Castelbeach"
+          },
+          "el5": {
+            "testo": "Uscita Castelbeach"
+          },
+          "md": {
+            "testo": "Uscita Castelbeach"
+          }
+        },
+        {
+          "giorno": 5,
+          "el1": {
+            "testo": "Attività Storia Giochi d'acqua"
+          },
+          "el2": {
+            "testo": "Attività Storia Giochi d'acqua"
+          },
+          "el3": {
+            "testo": "Attività Storia Giochi d'acqua"
+          },
+          "el4": {
+            "testo": "Attività Storia Giochi d'acqua"
+          },
+          "el5": {
+            "testo": "Attività Storia Giochi d'acqua"
+          },
+          "md": {
+            "testo": "Attività Storia Giochi d'acqua"
+          }
+        }
+      ]
+    },
+    {
+      "data_inizio": "20/07/2026",
+      "planning": [
+        {
+          "giorno": 1,
+          "el1": {
+            "testo": "Sport Pallavolo"
+          },
+          "el2": {
+            "testo": "Sport Pallavolo"
+          },
+          "el3": {
+            "testo": "Sport Pallavolo"
+          },
+          "el4": {
+            "testo": "Sport Pallavolo"
+          },
+          "el5": {
+            "testo": "Sport Pallavolo"
+          },
+          "md": {
+            "testo": "Sport Pallavolo"
+          }
+        },
+        {
+          "giorno": 2,
+          "el1": {
+            "testo": "Ospite trinity Music School"
+          },
+          "el2": {
+            "testo": "Ospite trinity Music School"
+          },
+          "el3": {
+            "testo": "Ospite trinity Music School"
+          },
+          "el4": {
+            "testo": "Ospite trinity Music School"
+          },
+          "el5": {
+            "testo": "Ospite trinity Music School"
+          },
+          "md": {
+            "testo": "Ospite trinity Music School"
+          }
+        },
+        {
+          "giorno": 3,
+          "el1": {
+            "testo": "Sport Calcio"
+          },
+          "el2": {
+            "testo": "Sport Calcio"
+          },
+          "el3": {
+            "testo": "Sport Calcio"
+          },
+          "el4": {
+            "testo": "Sport Calcio"
+          },
+          "el5": {
+            "testo": "Sport Calcio"
+          },
+          "md": {
+            "testo": "Sport Calcio"
+          }
+        },
+        {
+          "giorno": 4,
+          "el1": {
+            "testo": "Uscita Alberi Parlanti"
+          },
+          "el2": {
+            "testo": "Uscita Alberi Parlanti"
+          },
+          "el3": {
+            "testo": "Uscita Alberi Parlanti"
+          },
+          "el4": {
+            "testo": "Uscita Alberi Parlanti"
+          },
+          "el5": {
+            "testo": "Uscita Alberi Parlanti"
+          },
+          "md": {
+            "testo": "Uscita Alberi Parlanti"
+          }
+        },
+        {
+          "giorno": 5,
+          "el1": {
+            "testo": "Attività Storia"
+          },
+          "el2": {
+            "testo": "Attività Storia"
+          },
+          "el3": {
+            "testo": "Attività Storia"
+          },
+          "el4": {
+            "testo": "Attività Storia"
+          },
+          "el5": {
+            "testo": "Attività Storia"
+          },
+          "md": {
+            "testo": "Attività Storia"
+          }
+        }
+      ]
+    },
+    {
+      "data_inizio": "27/07/2026",
+      "planning": [
+        {
+          "giorno": 1,
+          "el1": {
+            "testo": "Sport Rugby"
+          },
+          "el2": {
+            "testo": "Sport Rugby"
+          },
+          "el3": {
+            "testo": "Sport Rugby"
+          },
+          "el4": {
+            "testo": "Sport Rugby"
+          },
+          "el5": {
+            "testo": "Sport Rugby"
+          },
+          "md": {
+            "testo": "Sport Rugby"
+          }
+        },
+        {
+          "giorno": 2,
+          "el1": {
+            "testo": "Sport Pallavolo"
+          },
+          "el2": {
+            "testo": "Sport Pallavolo"
+          },
+          "el3": {
+            "testo": "Sport Pallavolo"
+          },
+          "el4": {
+            "testo": "Sport Pallavolo"
+          },
+          "el5": {
+            "testo": "Sport Pallavolo"
+          },
+          "md": {
+            "testo": "Sport Pallavolo"
+          }
+        },
+        {
+          "giorno": 3,
+          "el1": {
+            "testo": "Ospite Apicoltura"
+          },
+          "el2": {
+            "testo": "Ospite Apicoltura"
+          },
+          "el3": {
+            "testo": "Ospite Apicoltura"
+          },
+          "el4": {
+            "testo": "Ospite Apicoltura"
+          },
+          "el5": {
+            "testo": "Ospite Apicoltura"
+          },
+          "md": {
+            "testo": "Ospite Apicoltura"
+          }
+        },
+        {
+          "giorno": 4,
+          "el1": {
+            "testo": "Sport Calcio"
+          },
+          "el2": {
+            "testo": "Sport Calcio"
+          },
+          "el3": {
+            "testo": "Sport Calcio"
+          },
+          "el4": {
+            "testo": "Sport Calcio"
+          },
+          "el5": {
+            "testo": "Sport Calcio"
+          },
+          "md": {
+            "testo": "Sport Calcio"
+          }
+        },
+        {
+          "giorno": 5,
+          "el1": {
+            "testo": "Serata Finale"
+          },
+          "el2": {
+            "testo": "Serata Finale"
+          },
+          "el3": {
+            "testo": "Serata Finale"
+          },
+          "el4": {
+            "testo": "Serata Finale"
+          },
+          "el5": {
+            "testo": "Serata Finale"
+          },
+          "md": {
+            "testo": "Serata Finale"
+          }
+        }
+      ]
+    }
+  ],
+  "comunicazioniTot": [
+    {
+      "testo": "Ricordiamo che per partecipare alle varie uscite è necessario consegnare il tagliandino firmato",
+      "tipo": "info",
+      "data_inizio": "29/06/2026",
+      "data_fine": "31/07/2026"
+    }
+    ,
+    {
+      "testo": "La settimana del 20/07 è previsto il laboratorio \"Maglietta tie-dye\". Ricordiamo che è necessario portare una maglietta bianca da colorare se si vuole partecipare al laboratorio",
+      "tipo": "warning",
+      "data_inizio": "13/07/2026",
+      "data_fine": "24/07/2026"
+    }
+  ]
+}

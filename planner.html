@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Planner animazione estiva</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- DaisyUI + TailwindCSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Quicksand:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Quicksand', Arial, sans-serif;
+            background: linear-gradient(90deg, var(--color-primary-content), var(--color-secondary-content) 90%);
+            scroll-behavior: smooth;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            color: var(--color-base-content);
+            overflow-x: hidden;
+        }
+
+        #nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 30;
+        }
+
+        main {
+            padding-top: var(--planner-nav-h, 64px);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .brand-font {
+            font-family: 'Fredoka', 'Quicksand', Arial, sans-serif;
+            text-shadow: 1.5px 1.5px 2px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <script>
+        let laboratoriTot = [];
+        let usciteTot = [];
+        let sportTot = [];
+        let calendarioTot = [];
+        let ospitiTot = [];
+        let comunicazioniTot = [];
+
+        let previewDate = null; // 'YYYY-MM-DD' | null → usa data reale
+
+        function getToday() {
+            if (previewDate) {
+                const [y, m, d] = previewDate.split('-').map(Number);
+                return new Date(y, m - 1, d);
+            }
+            return new Date();
+        }
+
+        function updateDataFromState(state) {
+            laboratoriTot = Array.isArray(state.laboratoriTot) ? state.laboratoriTot : [];
+            usciteTot = Array.isArray(state.usciteTot) ? state.usciteTot : [];
+            sportTot = Array.isArray(state.sportTot) ? state.sportTot : [];
+            calendarioTot = Array.isArray(state.calendarioTot) ? state.calendarioTot : [];
+            ospitiTot = Array.isArray(state.ospitiTot) ? state.ospitiTot : [];
+            comunicazioniTot = Array.isArray(state.comunicazioniTot) ? state.comunicazioniTot : [];
+
+            createComunicazioni();
+            createCalendar();
+            createUscite();
+            createLaboratori();
+            createSport();
+            createOspiti();
+            createUsciteAperte();
+            setTimeout(() => activateMenu(document.querySelectorAll('.menu-link')), 50);
+        }
+
+        function clearPreview() {
+            localStorage.removeItem('plannerData');
+            localStorage.removeItem('plannerPreviewDate');
+            location.reload();
+        }
+
+        function fmtBadgeDate(iso) {
+            const [y, m, d] = iso.split('-');
+            return `${d}/${m}/${y}`;
+        }
+
+        async function loadPlannerData() {
+            // Leggi data simulata prima del rendering
+            const storedDate = localStorage.getItem('plannerPreviewDate');
+            previewDate = storedDate || null;
+
+            const badge = document.getElementById('previewBadge');
+
+            try {
+                const stored = localStorage.getItem('plannerData');
+                if (stored) {
+                    const data = JSON.parse(stored);
+                    updateDataFromState(data);
+                    if (badge) {
+                        const parts = ['● Anteprima editor'];
+                        if (previewDate) parts.push(`data simulata: ${fmtBadgeDate(previewDate)}`);
+                        parts.push('— clicca per uscire');
+                        badge.textContent = parts.join(' · ');
+                        badge.classList.remove('hidden');
+                    }
+                    return;
+                }
+            } catch(e) {}
+
+            // Solo data simulata, dati reali
+            if (previewDate && badge) {
+                badge.textContent = `● Data simulata: ${fmtBadgeDate(previewDate)} — clicca per uscire`;
+                badge.classList.remove('hidden');
+            }
+
+            try {
+                const response = await fetch('./data.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error(`Impossibile caricare data.json: ${response.status}`);
+                const data = await response.json();
+                updateDataFromState(data);
+            } catch (error) {
+                console.error('Errore nel caricamento dati:', error);
+            }
+        }
+
+        // Throttle function per evitare lag durante lo scroll
+        function throttle(func, limit) {
+            let lastRun = 0;
+            return function() {
+                const args = arguments;
+                const context = this;
+                const now = Date.now();
+                if (now - lastRun >= limit) {
+                    func.apply(context, args);
+                    lastRun = now;
+                }
+            }
+        }
+
+        function activateMenu(navLinks) {
+            // Non aggiornare mentre il drawer mobile è aperto (scrollY = 0 su iOS con overflow:hidden)
+            const drawerToggle = document.getElementById('mobile-menu-drawer');
+            if (drawerToggle && drawerToggle.checked) return;
+
+            const navMenu = document.getElementById("nav-menu");
+            const titolo = document.getElementById("titolo");
+            const threshold = navMenu ? navMenu.offsetHeight + 1 : 65;
+            let activeId = '';
+
+            // Usa getBoundingClientRect: posizione relativa al viewport, immune ai bug di scrollY su mobile
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href') || '';
+                if (href.startsWith('#')) {
+                    const id = href.slice(1);
+                    const sec = document.getElementById(id);
+                    if (sec && sec.getBoundingClientRect().top <= threshold) {
+                        activeId = id;
+                    }
+                }
+            });
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === `#${activeId}`) {
+                    link.classList.add('active-menu-link');
+                    const text = link.textContent.trim();
+                    if (titolo && text) {
+                        if (text !== 'Home') titolo.textContent = text;
+                        else titolo.textContent = 'Animazione Estiva';
+                    }
+                } else {
+                    link.classList.remove('active-menu-link');
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const navLinks = document.querySelectorAll('.menu-link');
+            
+            // Applico throttle all'evento scroll per migliorare la performance
+            const throttledScroll = throttle(() => activateMenu(navLinks), 200);
+            window.addEventListener('scroll', throttledScroll, { passive: true });
+            window.addEventListener('resize', () => activateMenu(navLinks));
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => setTimeout(() => activateMenu(navLinks), 80));
+            });
+            activateMenu(navLinks);
+            const nav = document.getElementById("nav-menu");
+            const navH = nav ? nav.offsetHeight + 'px' : '64px';
+            document.documentElement.style.setProperty("--planner-nav-h", navH);
+            document.documentElement.style.scrollPaddingTop = navH;
+
+            const drawerToggle = document.getElementById('mobile-menu-drawer');
+            if (drawerToggle) {
+                drawerToggle.addEventListener('change', function () {
+                    document.documentElement.style.overflow = this.checked ? 'hidden' : 'auto';
+                });
+                
+                // Chiudi drawer e ripristina scroll quando clicchi un link dal menu
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        drawerToggle.checked = false;
+                        document.documentElement.style.overflow = 'auto';
+                    });
+                });
+            }
+        });
+    </script>
+
+    <style>
+        @media (max-width: 768px) {
+            td {
+                min-width: 100vw;
+                max-width: 100vw;
+            }
+        }
+
+        @media(min-width: 769px) {
+            td {
+                min-width: var(--container-3xl);
+                max-width: var(--container-3xl);
+            }
+        }
+
+        .imageCarouselSport {
+            max-height: 25vh;
+            min-height: 25vh;
+        }
+
+        .imageCarouselUscita {
+            max-height: 30vh;
+            min-height: 30vh;
+        }
+
+        .imageCarouselLaboratorio {
+            max-height: 30vh;
+            min-height: 30vh;
+        }
+
+        .imageCarouselUsciteAperte {
+            max-height: 30vh;
+            min-height: 30vh;
+        }
+
+        .imageCarouselOspiti {
+            max-height: 30vh;
+            min-height: 30vh;
+        }
+
+        .planner-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-padding-left: 0.5rem;
+        }
+
+        .planner-scroll::-webkit-scrollbar {
+            height: 0.65rem;
+        }
+
+        .planner-scroll::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.35);
+            border-radius: 999px;
+        }
+
+        .planner-track {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(calc(100vw - 2rem), calc(100vw - 2rem));
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        @media (min-width: 768px) {
+            .planner-track {
+                grid-auto-columns: minmax(320px, 320px);
+            }
+        }
+
+        .planner-item {
+            min-width: 0;
+            scroll-snap-align: start;
+        }
+
+        .planner-card {
+            height: 100%;
+        }
+
+        .card {
+            background: linear-gradient(180deg, var(--color-secondary-content), var(--color-primary-content) 90%);
+        }
+
+        .active-menu-link {
+            font-weight: 600;
+            color: var(--color-primary);
+            position: relative;
+        }
+
+        .active-menu-link::after {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 20%;
+            right: 20%;
+            bottom: 0.25em;
+            height: 0.15em;
+            border-radius: 5em;
+            background: var(--color-primary);
+            opacity: 0.90;
+            transition: all 0.25s cubic-bezier(0.43, 0.19, 0.1, 1);
+            z-index: 1;
+        }
+
+        main > section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 0;
+            scroll-margin-top: var(--planner-nav-h, 64px);
+        }
+
+        .sezione-vuota {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+
+        .sezione-vuota p {
+            font-size: 1.2rem;
+            font-style: italic;
+            opacity: 0.5;
+        }
+
+        main img {
+            cursor: zoom-in;
+        }
+    </style>
+    <script>
+        /* Funzioni week */
+        function getWeekRange() {
+            const today = getToday();
+            const day = today.getDay();
+            const diffToMonday = (day + 6) % 7;
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - diffToMonday);
+            startOfWeek.setHours(0, 0, 0, 0);
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 4);
+            endOfWeek.setHours(23, 59, 59, 999);
+            return { startOfWeek, endOfWeek };
+        }
+
+        function parseItalianDate(val) {
+            const p = String(val || '').split('/');
+            if (p.length !== 3 || !p[2]) return null;
+            const d = new Date(Number(p[2]), Number(p[1]) - 1, Number(p[0]));
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        function findUsciteThisWeek() {
+            const { startOfWeek, endOfWeek } = getWeekRange();
+            return usciteTot.filter(u => {
+                const d = parseItalianDate(u.data);
+                return d && d >= startOfWeek && d <= endOfWeek;
+            });
+        }
+
+        function findLaboratoriThisWeek() {
+            const { startOfWeek } = getWeekRange();
+            const startIso = startOfWeek.toISOString().slice(0, 10);
+            return laboratoriTot.filter(l => {
+                const d = parseItalianDate(l.settimana);
+                return d && d.toISOString().slice(0, 10) === startIso;
+            });
+        }
+
+        function findSportThisWeek() {
+            const { startOfWeek, endOfWeek } = getWeekRange();
+            return sportTot.filter(s => {
+                const d = parseItalianDate(s.data);
+                return d && d >= startOfWeek && d <= endOfWeek;
+            });
+        }
+
+        function findOspitiThisWeek() {
+            const { startOfWeek, endOfWeek } = getWeekRange();
+            return ospitiTot.filter(o => {
+                const d = parseItalianDate(o.data);
+                return d && d >= startOfWeek && d <= endOfWeek;
+            });
+        }
+
+        function findUsciteAperte() {
+            const today = getToday();
+            today.setHours(0, 0, 0, 0);
+            return usciteTot.filter(u => {
+                if (!u.data_apertura_iscrizione || !u.data_chiusura_iscrizione) return false;
+                const apertura = parseItalianDate(u.data_apertura_iscrizione);
+                const chiusura = parseItalianDate(u.data_chiusura_iscrizione);
+                if (!apertura || !chiusura) return false;
+                chiusura.setHours(23, 59, 59, 999);
+                return today >= apertura && today <= chiusura;
+            });
+        }
+
+        function esc(v) {
+            return String(v ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function vuoto(container, msg) {
+            container.innerHTML = `<div class="sezione-vuota"><p>${msg}</p></div>`;
+        }
+
+        function showDesc(id, show) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden', !show);
+        }
+
+
+        function createComunicazioni() {
+            const container = document.getElementById('comunicazioniContainer');
+            const section   = document.getElementById('comunicazioni');
+            if (!container) return;
+            const menuItem = document.getElementById('menuItemComunicazioni');
+
+            // Filtra per data corrente
+            const oggi = getToday(); oggi.setHours(0, 0, 0, 0);
+            const attive = comunicazioniTot.filter(c => {
+                const dal   = c.data_inizio ? parseItalianDate(c.data_inizio) : null;
+                const al    = c.data_fine   ? parseItalianDate(c.data_fine)   : null;
+                if (!dal && !al) return true;
+                if (dal && !al)  return oggi >= dal;
+                if (!dal && al)  return oggi <= al;
+                return oggi >= dal && oggi <= al;
+            });
+
+            if (!attive.length) {
+                container.innerHTML = '';
+                if (section)  { section.style.minHeight = '0'; section.style.padding = '0'; }
+                if (menuItem) menuItem.style.display = 'none';
+                return;
+            }
+            if (section)  { section.style.minHeight = ''; section.style.padding = ''; }
+            if (menuItem) menuItem.style.display = '';
+
+            const iconMap = { warning: '⚠️', error: '🚨', info: 'ℹ️' };
+            const clsMap  = { warning: 'alert-warning', error: 'alert-error', info: 'alert-info' };
+
+            const items = attive.map(c => {
+                const cls  = clsMap[c.tipo]  || 'alert-info';
+                const icon = iconMap[c.tipo] || 'ℹ️';
+                return `<div class="alert ${cls} shadow-sm">
+                    <span class="text-xl shrink-0">${icon}</span>
+                    <span class="text-sm md:text-base font-medium">${esc(c.testo)}</span>
+                </div>`;
+            }).join('');
+
+            container.innerHTML = `
+                <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">📢 Comunicazioni importanti</h2>
+                <p class="text-base mb-3 text-center w-full">Avvisi importanti per questa settimana</p>
+                <div class="space-y-3">${items}</div>`;
+        }
+
+        /* Funzioni create */
+        function formatClassGroup(keys) {
+            const order = ['el1', 'el2', 'el3', 'el4', 'el5', 'md'];
+            const labels = { el1: '1°el', el2: '2°el', el3: '3°el', el4: '4°el', el5: '5°el', md: 'Medie' };
+            const sorted = order.filter(k => keys.includes(k));
+            if (sorted.length === 6) return 'Tutti';
+            const elPart = sorted.filter(k => k !== 'md');
+            const hasMd = sorted.includes('md');
+            let result = '';
+            if (elPart.length > 0) {
+                const nums = elPart.map(k => parseInt(k.replace('el', '')));
+                const isConsec = nums.length > 2 && nums[nums.length - 1] - nums[0] === nums.length - 1;
+                result = isConsec ? `${nums[0]}°-${nums[nums.length - 1]}°el` : elPart.map(k => labels[k]).join(', ');
+            }
+            if (hasMd) result = result ? result + ', Medie' : 'Medie';
+            return result;
+        }
+
+        function createCalendar() {
+            const calendarContet = document.getElementById("calendarioContainer");
+            if (!calendarContet) return;
+
+            const { startOfWeek } = getWeekRange();
+
+            const validCalendari = calendarioTot
+                .map(c => ({ raw: c, start: parseItalianDate(c.data_inizio) }))
+                .filter(c => c.start && c.start <= startOfWeek)
+                .sort((a, b) => b.start - a.start);
+
+            if (validCalendari.length === 0) {
+                showDesc('calendarioDescription', false);
+                vuoto(calendarContet, 'Il calendario sarà disponibile a breve');
+                return;
+            }
+            showDesc('calendarioDescription', true);
+
+            const calendario = validCalendari[0].raw;
+            const dayNames = ["", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì"];
+            const classKeys = ['el1', 'el2', 'el3', 'el4', 'el5', 'md'];
+
+
+            function actChip(testo) {
+                const t = (testo || '').toLowerCase();
+                if (t.includes('uscita'))      return { bg: 'bg-secondary/12', iconBg: 'bg-secondary/25', icon: '🚌' };
+                if (t.includes('laboratorio')) return { bg: 'bg-info/12',      iconBg: 'bg-info/25',      icon: '🔬' };
+                if (t.includes('sport'))       return { bg: 'bg-success/12',   iconBg: 'bg-success/25',   icon: '⚽' };
+                if (t.includes('ospite'))      return { bg: 'bg-warning/12',   iconBg: 'bg-warning/25',   icon: '🌟' };
+                return                                { bg: 'bg-primary/12',   iconBg: 'bg-primary/25',   icon: '☀️' };
+            }
+
+            // Badge classi età — stessa dimensione del badge data (badge-sm DaisyUI)
+            function classBadges(keySet) {
+                const order = ['el1','el2','el3','el4','el5','md'];
+                const clr = {
+                    el1: 'badge-soft badge-primary',
+                    el2: 'badge-soft badge-secondary',
+                    el3: 'badge-soft badge-accent',
+                    el4: 'badge-soft badge-info',
+                    el5: 'badge-soft badge-success',
+                    md:  'badge-soft badge-warning'
+                };
+                const keys = order.filter(k => keySet.has(k));
+
+                const b = (cls, txt) =>
+                    `<span class="badge badge-sm font-semibold ${cls}">${txt}</span>`;
+
+                if (keys.length === 6) return `<span class="badge badge-sm font-semibold" style="background:linear-gradient(135deg,#c7d2fe,#e9d5ff,#fbcfe8,#fed7aa,#bbf7d0);color:#4b5563;border:0;">✦ Tutti</span>`;
+
+                const elKeys = keys.filter(k => k !== 'md');
+                const hasMd  = keySet.has('md');
+                let html = '';
+
+                if (elKeys.length >= 3) {
+                    const nums   = elKeys.map(k => parseInt(k.replace('el', '')));
+                    const consec = nums[nums.length - 1] - nums[0] === nums.length - 1;
+                    if (consec) {
+                        html += b('badge-soft badge-primary', `${nums[0]}°–${nums[nums.length-1]}° elementare`);
+                    } else {
+                        html += elKeys.map(k => b(clr[k], `${k.replace('el','')}° elementare`)).join('');
+                    }
+                } else {
+                    html += elKeys.map(k => b(clr[k], `${k.replace('el','')}° elementare`)).join('');
+                }
+                if (hasMd) html += b('badge-soft badge-warning', 'Medie');
+                return html;
+            }
+
+            let inner = `<div class="planner-scroll py-2"><div class="planner-track">`;
+
+            calendario.planning.forEach(giorno => {
+                const dayIndex = parseInt(giorno.giorno, 10) || 1;
+                const dt = new Date(startOfWeek);
+                dt.setDate(startOfWeek.getDate() + (dayIndex - 1));
+                const dd = String(dt.getDate()).padStart(2, '0');
+                const mm = String(dt.getMonth() + 1).padStart(2, '0');
+
+                // Raggruppa classi per attività — supporta array (nuovo) e stringa con / (retro-compatibile)
+                const actMap = new Map();
+                classKeys.forEach(k => {
+                    const raw = giorno[k]?.testo;
+                    if (!raw && raw !== 0) return;
+                    const parts = Array.isArray(raw) ? raw : String(raw).split('/');
+                    parts.forEach(part => {
+                        const t = part.trim();
+                        if (!t) return;
+                        if (!actMap.has(t)) actMap.set(t, new Set());
+                        actMap.get(t).add(k);
+                    });
+                });
+
+                let chips = '';
+                actMap.forEach((keySet, testo) => {
+                    const { bg, iconBg, icon } = actChip(testo);
+                    chips += `
+                        <div class="rounded-xl ${bg} px-3 py-2.5 flex gap-3 items-start">
+                            <div class="shrink-0 w-9 h-9 rounded-lg ${iconBg} flex items-center justify-center text-xl leading-none">
+                                ${icon}
+                            </div>
+                            <div class="flex-1 min-w-0 pt-0.5">
+                                <p class="text-sm font-bold leading-snug">${esc(testo)}</p>
+                                <div class="flex flex-wrap gap-1 mt-1.5">${classBadges(keySet)}</div>
+                            </div>
+                        </div>`;
+                });
+
+                inner += `
+                    <div class="planner-item">
+                        <div class="card planner-card bg-base-100 shadow-md border-0 overflow-hidden">
+                            <div class="px-4 py-3 flex items-center justify-between bg-gradient-to-r from-primary/15 to-transparent border-b border-primary/10">
+                                <h4 class="font-bold text-xl text-primary">${dayNames[dayIndex] || ''}</h4>
+                                <span class="badge badge-primary badge-sm font-bold">${dd}/${mm}</span>
+                            </div>
+                            <div class="px-3 py-2.5 flex flex-col gap-2">${chips}</div>
+                        </div>
+                    </div>`;
+            });
+
+            inner += `</div></div>`;
+            calendarContet.innerHTML = inner;
+        }
+
+        function createUscite() {
+            const container = document.getElementById("usciteSettimanaContainer");
+            if (!container) return;
+            const week = findUsciteThisWeek();
+            if (!week.length) { showDesc('usciteSettimanaDescription', false); vuoto(container, 'Non sono previste uscite questa settimana'); return; }
+            showDesc('usciteSettimanaDescription', true);
+
+            const scroll = document.createElement('div');
+            scroll.className = 'planner-scroll py-2';
+            const track = document.createElement('div');
+            track.className = 'planner-track';
+
+            week.forEach(uscita => {
+                const item = document.createElement('div');
+                item.className = 'planner-item';
+                const card = document.createElement('div');
+                card.className = 'card planner-card bg-base-100 shadow-sm border-0';
+
+                if (uscita.immagineUrl) {
+                    const fig = document.createElement('figure');
+                    const img = document.createElement('img');
+                    img.src = uscita.immagineUrl; img.alt = uscita.titolo || '';
+                    img.className = 'imageCarouselUscita rounded-xl object-cover w-full';
+                    fig.appendChild(img); card.appendChild(fig);
+                }
+
+                const body = document.createElement('div');
+                body.className = 'card-body';
+                body.innerHTML = `
+                    <h3 class="text-lg font-semibold text-primary text-center">${esc(uscita.titolo)}</h3>
+                    <div class="badge badge-primary">${esc(uscita.data)}</div>
+                    <p class="text-sm"><strong>Luogo:</strong> ${esc(uscita.luogo || 'N/A')}</p>`;
+
+                if (uscita.fascia_eta?.length) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'flex flex-row gap-1 flex-wrap mt-2';
+                    uscita.fascia_eta.forEach(f => {
+                        const b = document.createElement('div');
+                        b.className = 'badge badge-soft badge-secondary'; b.textContent = f;
+                        wrap.appendChild(b);
+                    });
+                    body.appendChild(wrap);
+                }
+                if (uscita.descrizione) {
+                    const p = document.createElement('p');
+                    p.className = 'mt-2 text-sm'; p.textContent = uscita.descrizione;
+                    body.appendChild(p);
+                }
+                if (uscita.sito_web?.trim()) {
+                    const actions = document.createElement('div');
+                    actions.className = 'card-actions justify-center mt-2';
+                    const a = document.createElement('a');
+                    a.href = uscita.sito_web; a.target = '_blank';
+                    a.className = 'btn btn-outline btn-secondary btn-sm'; a.textContent = 'Sito web';
+                    actions.appendChild(a); body.appendChild(actions);
+                }
+                card.appendChild(body); item.appendChild(card); track.appendChild(item);
+            });
+
+            scroll.appendChild(track);
+            container.innerHTML = '';
+            container.appendChild(scroll);
+        }
+
+        function createSport() {
+            const container = document.getElementById("sportSettimanaContainer");
+            if (!container) return;
+            const week = findSportThisWeek();
+            if (!week.length) { showDesc('sportSettimanaDescription', false); vuoto(container, 'Non sono previsti sport questa settimana'); return; }
+            showDesc('sportSettimanaDescription', true);
+
+            let inner = `<div class="planner-scroll py-2"><div class="planner-track">`;
+            week.forEach(sport => {
+                inner += `<div class="planner-item"><div class="card planner-card bg-base-100 shadow-sm border-0">`;
+                if (sport.immagineUrl) inner += `<figure><img src="${esc(sport.immagineUrl)}" alt="${esc(sport.titolo)}" class="imageCarouselSport rounded-xl object-cover w-full"/></figure>`;
+                inner += `<div class="card-body">
+                    <h3 class="text-lg font-semibold text-primary text-center">${esc(sport.titolo)}</h3>
+                    <div class="badge badge-outline">${esc(sport.data)}</div>
+                    <p class="text-sm"><strong>Associazione:</strong> ${esc(sport.associazione) || 'N/A'}</p>
+                    ${sport.descrizione ? `<p class="text-sm mt-1">${esc(sport.descrizione)}</p>` : ''}
+                </div></div></div>`;
+            });
+            inner += `</div></div>`;
+            container.innerHTML = inner;
+        }
+
+        function createLaboratori() {
+            const container = document.getElementById("laboratoriSettimanaContainer");
+            if (!container) return;
+            const week = findLaboratoriThisWeek();
+            if (!week.length) { showDesc('laboratoriSettimanaDescription', false); vuoto(container, 'Non sono previsti laboratori questa settimana'); return; }
+            showDesc('laboratoriSettimanaDescription', true);
+
+            let inner = `<div class="planner-scroll py-2"><div class="planner-track">`;
+            week.forEach(lab => {
+                const diffClass = lab.difficoltà === 'facile' ? 'badge-success' : lab.difficoltà === 'media' ? 'badge-warning' : 'badge-error';
+                inner += `<div class="planner-item"><div class="card planner-card bg-base-100 shadow-sm border-0">`;
+                if (lab.immagineUrl) inner += `<figure><img src="${esc(lab.immagineUrl)}" alt="${esc(lab.titolo)}" class="imageCarouselLaboratorio rounded-xl object-cover w-full"/></figure>`;
+                inner += `<div class="card-body">
+                    <h3 class="text-lg font-semibold text-primary text-center">${esc(lab.titolo)}</h3>
+                    <div class="flex gap-2 flex-wrap">
+                        ${lab.difficoltà ? `<div class="badge ${diffClass}">${esc(lab.difficoltà)}</div>` : ''}
+                    </div>
+                    ${lab.descrizione ? `<p class="text-sm mt-1">${esc(lab.descrizione)}</p>` : ''}
+                </div></div></div>`;
+            });
+            inner += `</div></div>`;
+            container.innerHTML = inner;
+        }
+
+        function createOspiti() {
+            const container = document.getElementById("ospitiSettimanaContainer");
+            if (!container) return;
+            const week = findOspitiThisWeek();
+            if (!week.length) { showDesc('ospitiSettimanaDescription', false); vuoto(container, 'Non sono previsti ospiti questa settimana'); return; }
+            showDesc('ospitiSettimanaDescription', true);
+
+            let inner = `<div class="planner-scroll py-2"><div class="planner-track">`;
+            week.forEach(ospite => {
+                inner += `<div class="planner-item"><div class="card planner-card bg-base-100 shadow-sm border-0">`;
+                if (ospite.immagineUrl) inner += `<figure><img src="${esc(ospite.immagineUrl)}" alt="${esc(ospite.titolo)}" class="imageCarouselOspiti rounded-xl object-cover w-full"/></figure>`;
+                inner += `<div class="card-body">
+                    <h3 class="text-lg font-semibold text-primary text-center">${esc(ospite.titolo)}</h3>
+                    <div class="badge badge-outline">${esc(ospite.data)}</div>
+                    ${ospite.descrizione ? `<p class="text-sm mt-1">${esc(ospite.descrizione)}</p>` : ''}
+                    ${ospite.sito_web?.trim() ? `<div class="card-actions justify-center mt-2"><a href="${esc(ospite.sito_web)}" target="_blank" rel="noopener" class="btn btn-sm btn-outline btn-primary">Visita sito</a></div>` : ''}
+                </div></div></div>`;
+            });
+            inner += `</div></div>`;
+            container.innerHTML = inner;
+        }
+
+        function createUsciteAperte() {
+            const container = document.getElementById("usciteAperteContainer");
+            if (!container) return;
+            const usciteAperte = findUsciteAperte();
+            if (usciteAperte.length === 0) { showDesc('usciteAperteDescription', false); vuoto(container, 'Non ci sono iscrizioni aperte al momento'); return; }
+            showDesc('usciteAperteDescription', true);
+
+            const scroll = document.createElement('div');
+            scroll.className = 'planner-scroll py-2';
+            const track = document.createElement('div');
+            track.className = 'planner-track';
+
+            usciteAperte.forEach(uscita => {
+                const item = document.createElement('div');
+                item.className = 'planner-item';
+                const card = document.createElement('div');
+                card.className = 'card planner-card bg-base-100 shadow-sm border-0';
+
+                if (uscita.immagineUrl) {
+                    const fig = document.createElement('figure');
+                    const img = document.createElement('img');
+                    img.src = uscita.immagineUrl; img.alt = uscita.titolo || '';
+                    img.className = 'imageCarouselUsciteAperte rounded-xl object-cover w-full';
+                    fig.appendChild(img); card.appendChild(fig);
+                }
+
+                const body = document.createElement('div');
+                body.className = 'card-body';
+                body.innerHTML = `
+                    <h3 class="text-lg font-semibold text-primary text-center">${esc(uscita.titolo)}</h3>
+                    <div class="badge badge-primary">${esc(uscita.data)}</div>
+                    <p class="text-sm"><strong>Luogo:</strong> ${esc(uscita.luogo || 'N/A')}</p>
+                    <p class="text-xs opacity-60">Iscrizioni aperte fino al: <strong>${esc(uscita.data_chiusura_iscrizione)}</strong></p>`;
+
+                if (uscita.fascia_eta?.length) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'flex flex-row gap-1 flex-wrap mt-2';
+                    uscita.fascia_eta.forEach(f => {
+                        const b = document.createElement('div');
+                        b.className = 'badge badge-soft badge-secondary'; b.textContent = f;
+                        wrap.appendChild(b);
+                    });
+                    body.appendChild(wrap);
+                }
+                if (uscita.descrizione) {
+                    const p = document.createElement('p');
+                    p.className = 'mt-2 text-sm'; p.textContent = uscita.descrizione;
+                    body.appendChild(p);
+                }
+
+                const actions = document.createElement('div');
+                actions.className = 'card-actions justify-center mt-2 flex flex-wrap gap-2';
+                const authLink = uscita.link_autorizzazione || uscita.link_tagliandino;
+                if (authLink?.trim()) {
+                    const a = document.createElement('a');
+                    a.href = authLink; a.target = '_blank';
+                    a.className = 'btn btn-outline btn-primary btn-sm'; a.textContent = 'Autorizzazione';
+                    actions.appendChild(a);
+                }
+                if (uscita.sito_web?.trim()) {
+                    const a2 = document.createElement('a');
+                    a2.href = uscita.sito_web; a2.target = '_blank';
+                    a2.className = 'btn btn-outline btn-secondary btn-sm'; a2.textContent = 'Sito web';
+                    actions.appendChild(a2);
+                }
+                if (actions.children.length > 0) body.appendChild(actions);
+
+                card.appendChild(body); item.appendChild(card); track.appendChild(item);
+            });
+
+            scroll.appendChild(track);
+            container.innerHTML = '';
+            container.appendChild(scroll);
+        }
+
+        /*  onload */
+        document.addEventListener("DOMContentLoaded", async function () {
+
+            try {
+                await loadPlannerData();
+            } catch (error) {
+                console.error(error);
+                const errorMessage = `<div class="alert alert-error shadow-md my-4">${error.message}</div>`;
+                ["calendarioContainer","usciteSettimanaContainer","laboratoriSettimanaContainer",
+                 "sportSettimanaContainer","ospitiSettimanaContainer","usciteAperteContainer"
+                ].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = errorMessage;
+                });
+            }
+        });
+    </script>
+</head>
+
+<body class="bg-base-100 min-h-screen text-base-content">
+    <!-- Navbar -->
+    <nav class="navbar bg-base-100 sticky top-0 z-30 px-3 shadow-sm flex" style="backdrop-filter:blur(10px); background: linear-gradient(90deg, var(--color-primary-content), var(--color-secondary-content) 90%);"
+        id="nav-menu">
+        <div class="navbar-start">
+            <div class="drawer flex-end">
+                <input id="mobile-menu-drawer" type="checkbox" class="drawer-toggle" />
+                <div class="drawer-content">
+                    <label tabindex="0" role="button" for="mobile-menu-drawer"
+                        class="btn btn-ghost btn-circle drawer-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </label>
+                </div>
+                <div class="drawer-side">
+                    <label for="mobile-menu-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+                    <ul tabindex="-1"
+                        class="menu menu-lg dropdown-content dropdown-end bg-base-100 rounded-box z-10 w-52 shadow min-h-screen">
+                        <li id="menuItemComunicazioni" style="display:none"><a href="#comunicazioni" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer').checked=false">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                    <path d="M10 2a6 6 0 0 0-6 6c0 1.887-.454 3.665-1.257 5.234a.75.75 0 0 0 .515 1.076 32.91 32.91 0 0 0 3.256.508 3.5 3.5 0 0 0 6.972 0 32.903 32.903 0 0 0 3.256-.508.75.75 0 0 0 .515-1.076A11.448 11.448 0 0 1 16 8a6 6 0 0 0-6-6ZM8.05 14.943a33.54 33.54 0 0 0 3.9 0 2 2 0 0 1-3.9 0Z" />
+                                </svg>
+                                Comunicazioni</a></li>
+                        <li><a href="#calendario" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer').checked=false">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                    <path d="M10 9.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V10a.75.75 0 0 0-.75-.75H10ZM6 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H6ZM8 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H8ZM9.25 14a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H10a.75.75 0 0 1-.75-.75V14ZM12 11.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V12a.75.75 0 0 0-.75-.75H12ZM12 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H12ZM13.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H14a.75.75 0 0 1-.75-.75V12ZM11.25 10.005c0-.417.338-.755.755-.755h2a.755.755 0 1 1 0 1.51h-2a.755.755 0 0 1-.755-.755ZM6.005 11.25a.755.755 0 1 0 0 1.51h4a.755.755 0 1 0 0-1.51h-4Z" />
+                                    <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd" />
+                                </svg>
+                                Calendario</a></li>
+                        <li><a href="#uscite" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer').checked=false">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                    <path fill-rule="evenodd" d="M4.606 12.97a.75.75 0 0 1-.134 1.051 2.494 2.494 0 0 0-.93 2.437 2.494 2.494 0 0 0 2.437-.93.75.75 0 1 1 1.186.918 3.995 3.995 0 0 1-4.482 1.332.75.75 0 0 1-.461-.461 3.994 3.994 0 0 1 1.332-4.482.75.75 0 0 1 1.052.134Z" clip-rule="evenodd" />
+                                    <path fill-rule="evenodd" d="M5.752 12A13.07 13.07 0 0 0 8 14.248v4.002c0 .414.336.75.75.75a5 5 0 0 0 4.797-6.414 12.984 12.984 0 0 0 5.45-10.848.75.75 0 0 0-.735-.735 12.984 12.984 0 0 0-10.849 5.45A5 5 0 0 0 1 11.25c.001.414.337.75.751.75h4.002ZM13 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" clip-rule="evenodd" />
+                                </svg>
+                                Uscite</a></li>
+                        <li><a href="#laboratori" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer').checked=false">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                    <path d="M15.993 1.385a1.87 1.87 0 0 1 2.623 2.622l-4.03 5.27a12.749 12.749 0 0 1-4.237 3.562 4.508 4.508 0 0 0-3.188-3.188 12.75 12.75 0 0 1 3.562-4.236l5.27-4.03ZM6 11a3 3 0 0 0-3 3 .5.5 0 0 1-.72.45.75.75 0 0 0-1.035.931A4.001 4.001 0 0 0 9 14.004V14a3.01 3.01 0 0 0-1.66-2.685A2.99 2.99 0 0 0 6 11Z" />
+                                </svg>
+                                Laboratori</a></li>
+                        <li><a href="#sport" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer').checked=false">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                    <path d="M12 4.467c0-.405.262-.75.559-1.027.276-.257.441-.584.441-.94 0-.828-.895-1.5-2-1.5s-2 .672-2 1.5c0 .362.171.694.456.953.29.265.544.6.544.994a.968.968 0 0 1-1.024.974 39.655 39.655 0 0 1-3.014-.306.75.75 0 0 0-.847.847c.14.993.242 1.999.306 3.014A.968.968 0 0 1 4.447 10c-.393 0-.729-.253-.994-.544C3.194 9.17 2.862 9 2.5 9 1.672 9 1 9.895 1 11s.672 2 1.5 2c.356 0 .683-.165.94-.441.276-.297.622-.559 1.027-.559a.997.997 0 0 1 1.004 1.03 39.747 39.747 0 0 1-.319 3.734.75.75 0 0 0 .64.842c1.05.146 2.111.252 3.184.318A.97.97 0 0 0 10 16.948c0-.394-.254-.73-.545-.995C9.171 15.693 9 15.362 9 15c0-.828.895-1.5 2-1.5s2 .672 2 1.5c0 .356-.165.683-.441.94-.297.276-.559.622-.559 1.027a.998.998 0 0 0 1.03 1.005c1.337-.05 2.659-.162 3.961-.337a.75.75 0 0 0 .644-.644c.175-1.302.288-2.624.337-3.961A.998.998 0 0 0 16.967 12c-.405 0-.75.262-1.027.559-.257.276-.584.441-.94.441-.828 0-1.5-.895-1.5-2s.672-2 1.5-2c.362 0 .694.17.953.455.265.291.601.545.995.545a.97.97 0 0 0 .976-1.024 41.159 41.159 0 0 0-.318-3.184.75.75 0 0 0-.842-.64c-1.228.164-2.473.271-3.734.319A.997.997 0 0 1 12 4.467Z" />
+                                </svg>
+                                Sport</a></li>
+                        <li><a href="#ospiti" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer').checked=false">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                                    <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+                                </svg>
+                                Ospiti</a></li>
+                        <li><a href="#uscite-aperte" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer').checked=false">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                    <path fill-rule="evenodd" d="M15.75 3A2.25 2.25 0 0 1 18 5.25v1.214c0 .423-.277.788-.633 1.019A2.997 2.997 0 0 0 16 10c0 1.055.544 1.982 1.367 2.517.356.231.633.596.633 1.02v1.213A2.25 2.25 0 0 1 15.75 17H4.25A2.25 2.25 0 0 1 2 14.75v-1.213c0-.424.277-.789.633-1.02A2.998 2.998 0 0 0 4 10a2.997 2.997 0 0 0-1.367-2.517C2.277 7.252 2 6.887 2 6.463V5.25A2.25 2.25 0 0 1 4.25 3h11.5ZM13.5 7.396a.75.75 0 0 0-1.5 0v1.042a.75.75 0 0 0 1.5 0V7.396Zm0 4.167a.75.75 0 0 0-1.5 0v1.041a.75.75 0 0 0 1.5 0v-1.041Z" clip-rule="evenodd" />
+                                </svg>
+                                Uscite aperte</a></li>
+                        <li><div class="divider"></div></li>
+                        <li><a href="./index.html" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer').checked=false">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                    <path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />
+                                </svg> Home
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-center">
+            <div class="flex-1">
+                <h1><span class="brand text-xl font-bold text-primary" id="titolo">Animazione Estiva</span></h1>
+            </div>
+        </div>
+        <div id="previewBadge" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 badge badge-warning badge-lg gap-2 shadow-lg cursor-pointer" onclick="clearPreview()">
+          ● Anteprima modifiche editor — clicca per ricaricare da file
+        </div>
+        <div class="navbar-end">
+            <label class="swap swap-rotate">
+                <input type="checkbox" class="theme-controller" value="synthwave" />
+                <svg class="swap-off h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+                </svg>
+                <svg class="swap-on h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
+                </svg>
+            </label>
+        </div>
+    </nav>
+
+    <main class="w-full max-w-6xl mx-auto px-3 md:px-6">
+        <!-- Comunicazioni importanti (mostrate solo se presenti) -->
+        <section id="comunicazioni" style="min-height:0;padding:0;">
+            <div id="comunicazioniContainer"></div>
+        </section>
+
+        <!-- Calendario -->
+        <section id="calendario">
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">La nostra settimana</h2>
+            <p class="text-base mb-3 mx-auto text-center w-full" id="calendarioDescription">
+                Scorri per vedere tutta la nostra settimana
+            </p>
+            <div id="calendarioContainer"></div>
+        </section>
+
+        <!-- Uscite -->
+        <section id="uscite">
+            <div class="divider"></div>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Le uscite di questa settimana</h2>
+            <p class="text-base mb-3 text-center w-full" id="usciteSettimanaDescription">
+                Scorri per vedere tutte le uscite previste per questa settimana
+            </p>
+            <div id="usciteSettimanaContainer"></div>
+        </section>
+
+        <!-- Laboratori -->
+        <section id="laboratori">
+            <div class="divider"></div>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Laboratori della settimana</h2>
+            <p class="text-base mb-3 text-center w-full" id="laboratoriSettimanaDescription">
+                Scorri per vedere tutti i laboratori previsti per questa settimana
+            </p>
+            <div id="laboratoriSettimanaContainer"></div>
+        </section>
+
+        <!-- Sport -->
+        <section id="sport">
+            <div class="divider"></div>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Sport della settimana</h2>
+            <p class="text-base mb-3 text-center w-full" id="sportSettimanaDescription">
+                Scorri per vedere tutti gli sport previsti per questa settimana
+            </p>
+            <div id="sportSettimanaContainer"></div>
+        </section>
+
+        <!-- Ospiti -->
+        <section id="ospiti">
+            <div class="divider"></div>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Ospiti della settimana</h2>
+            <p class="text-base mb-3 text-center w-full" id="ospitiSettimanaDescription">
+                Scorri per vedere tutti gli ospiti previsti per questa settimana
+            </p>
+            <div id="ospitiSettimanaContainer"></div>
+        </section>
+
+        <!-- Uscite aperte -->
+        <section id="uscite-aperte">
+            <div class="divider"></div>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Uscite aperte alle iscrizioni</h2>
+            <p class="text-base mb-3 text-center w-full" id="usciteAperteDescription">
+                Scorri per vedere le uscite con le iscrizioni attualmente aperte
+            </p>
+            <div id="usciteAperteContainer"></div>
+        </section>
+    </main>
+
+    <!-- Lightbox modale immagini -->
+    <dialog id="imgModal" class="modal">
+        <div class="modal-box max-w-3xl p-3 bg-base-100">
+            <img id="imgModalImg" src="" alt="" class="w-full rounded-xl object-contain max-h-[80vh]">
+            <p id="imgModalCaption" class="text-center text-sm opacity-60 mt-2"></p>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>chiudi</button>
+        </form>
+    </dialog>
+
+    <script>
+        document.addEventListener('click', function (e) {
+            const img = e.target.closest('main img');
+            if (!img) return;
+            const modal  = document.getElementById('imgModal');
+            const mImg   = document.getElementById('imgModalImg');
+            const mCapt  = document.getElementById('imgModalCaption');
+            mImg.src     = img.src;
+            mImg.alt     = img.alt || '';
+            mCapt.textContent = img.alt || '';
+            modal.showModal();
+        });
+    </script>
+
+</body>
+
+</html>

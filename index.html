@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Animazione Estiva</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- DaisyUI + TailwindCSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Quicksand:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Quicksand', Arial, sans-serif;
+            background: linear-gradient(90deg, var(--color-primary-content), var(--color-secondary-content) 90%);
+            scroll-behavior: smooth;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: var(--nav-height, 64px);
+            color: var(--color-base-content);
+            overflow-x: hidden;
+        }
+
+        .dropdown-content {
+            background: linear-gradient(90deg, var(--color-secondary-content), var(--color-primary-content) 90%);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Fredoka', 'Quicksand', Arial, sans-serif;
+            text-shadow: 1.5px 1.5px 2px rgba(0, 0, 0, 0.1);
+        }
+
+
+
+        .btn,
+        .btn-outline,
+        .btn-primary,
+        .btn-accent {
+            border-radius: 1.6rem;
+        }
+
+
+        .divider-minimal {
+            border: 0;
+            height: 2px;
+            border-radius: 1px;
+            background: linear-gradient(90deg, var(--color-secondary) 50%, var(--color-primary) 50%);
+            opacity: .16;
+            margin: 2.4rem auto 1.7rem auto;
+            max-width: 320px;
+        }
+
+        .divider-int {
+            margin-bottom: 1.5rem;
+        }
+        .collapse {
+            border-radius: 3rem;
+            border-bottom-width: 2px;
+            border-bottom-style: solid;
+            border-bottom-color: var(--color-primary);
+            border-left-width: 4px;
+            border-left-style: solid;
+            border-left-color: var(--color-primary);
+            background-color: var(--b2);
+            padding: 0.2rem;
+            scroll-margin-top: calc(var(--nav-height, 64px) + 8px);
+            will-change: auto;
+            transition: all 0.3s ease-out;
+        }
+
+        .collapse.collapse-open {
+            will-change: transform;
+        }
+
+        .collapse-help {
+            border-left-color: var(--color-warning);
+            border-bottom-color: var(--color-warning);
+        }
+
+
+
+        section {
+            min-height: calc(100vh - var(--nav-height));
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .active-menu-link {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .active-menu-link::after {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 20%;
+            right: 20%;
+            bottom: 0.25em;
+            height: 0.15em;
+            border-radius: 5em;
+            background: var(--color-primary);
+            /* DaisyUI */
+            opacity: 0.90;
+            transition: all 0.25s cubic-bezier(0.43, 0.19, 0.1, 1);
+            z-index: 1;
+        }
+
+
+        #nav-menu {
+            position: fixed;
+            top: 0;
+            z-index: 30;
+            display: flex;
+            padding: 0 0.75rem;
+            background: linear-gradient(90deg, var(--color-primary-content), var(--color-secondary-content) 90%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+
+    <script>
+        const sectionIds = [
+            "home", "chi-siamo", "organizzazione", "la-nostra-animazione",
+            "collaborazioni", "modulistica", "contatti",
+        ];
+        let previousScrollPosition = 0;
+        let navbarVisible = true;
+        const ENABLE_NAVBAR_HIDE_ON_SCROLL = false; // Cambia a false per disabilitare la funzionalità di nascondere/mostrare la navbar durante lo scroll
+        
+        // Throttle function per evitare lag durante lo scroll
+        function throttle(func, limit) {
+            let inThrottle;
+            let lastRun = 0;
+            return function() {
+                const args = arguments;
+                const context = this;
+                const now = Date.now();
+                if (now - lastRun >= limit) {
+                    func.apply(context, args);
+                    lastRun = now;
+                }
+            }
+        }
+        
+        //Tutti gli id delle sezioni, filtrati per quelli esistenti nel DOM
+        function getSections() {
+            return sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+        }
+
+        function activateMenu(navLinks) {
+            const sections = getSections();
+            let activeId = sections[0] ? sections[0].id : ""; // default al primo id se esiste, altrimenti stringa vuota
+            const titolo = document.getElementById("titolo");
+            const navMenu = document.getElementById("nav-menu");
+            const offsetNavMenu = navMenu ? navMenu.offsetHeight : 0;
+            const scrollY = window.scrollY || window.pageYOffset;
+            const threshold = 10; // movimento minimo in pixel per attivare7disattivare navbar
+
+
+            for (let i = sections.length - 1; i >= 0; i--) {
+                if (sections[i].offsetTop <= scrollY + offsetNavMenu) {
+                    activeId = sections[i].id;
+                    break;
+                }
+            }
+
+            //AGGIORNO I LINK E IL TITOLETTO IN BASE ALLA SEZIONE ATTIVA
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === `#${activeId}`) {
+                    link.classList.add('active-menu-link');
+                    if (link.textContent !== titolo.textContent) {
+                        if (link.textContent !== 'Home') {
+                            titolo.textContent = link.textContent;
+                        } else {
+                            titolo.textContent = "Animazione Estiva";
+                        }
+                    }
+                } else {
+                    link.classList.remove('active-menu-link');
+                }
+            });
+
+            // NAVBAR SHOW/HIDE SOLO SE IL MOVIMENTO È NETTO E STATO CAMBIA
+            if (ENABLE_NAVBAR_HIDE_ON_SCROLL) {
+                if (scrollY - previousScrollPosition > threshold && navbarVisible && scrollY > 80) {
+                    // Scorro in giù abbondantemente e navbar era visibile: nascondi con animazione
+                    navMenu.classList.add("navbar-hidden");
+                    navbarVisible = false;
+                } else if (previousScrollPosition - scrollY > threshold && !navbarVisible) {
+                    // Scorro su abbondantemente e navbar era nascosta: mostra con animazione
+                    navMenu.classList.remove("navbar-hidden");
+                    navbarVisible = true;
+                }
+
+                previousScrollPosition = scrollY;
+            }
+
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            //Tutti i link del menu solo quando ho cariato il contenuto
+            const navLinks = document.querySelectorAll('.menu-link');
+
+            // Applico throttle all'evento scroll per migliorare la performance
+            const throttledScroll = throttle(() => activateMenu(navLinks), 200);
+            window.addEventListener('scroll', throttledScroll, { passive: true });
+            window.addEventListener('resize', () => activateMenu(navLinks));
+            activateMenu(navLinks);
+            document.documentElement.style.setProperty(
+                "--nav-height",
+                document.getElementById("nav-menu").offsetHeight + "px"
+            );
+
+            const drawerToggle = document.getElementById('mobile-menu-drawer');
+            if (drawerToggle) {
+                drawerToggle.addEventListener('change', function () {
+                    document.documentElement.style.overflow = this.checked ? 'hidden' : 'auto';
+                });
+                
+                // Chiudi drawer e ripristina scroll quando clicchi un link dal menu
+                const menuLinks = document.querySelectorAll('.menu-link');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        drawerToggle.checked = false;
+                        document.documentElement.style.overflow = 'auto';
+                    });
+                });
+            }
+
+            // Scroll the opened accordion below the navbar once the transition finishes
+            document.querySelectorAll('.collapse input[type="radio"], .collapse input[type="checkbox"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    if (!this.checked) return;
+                    const collapseDiv = this.closest('.collapse');
+                    if (!collapseDiv) return;
+                    // Wait for the CSS collapse transition to complete (DaisyUI ≈ 200ms)
+                    // then scrollIntoView respects scroll-margin-top set on .collapse
+                    setTimeout(() => {
+                        collapseDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 220);
+                });
+            });
+        });
+
+    </script>
+    <style>
+        img {
+            width: auto;
+            height: auto;
+        }
+
+        #filoConduttoreImg {
+            position: relative;
+            z-index: -100;
+            max-height: 50%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #attivitaImg {
+            position: relative;
+            z-index: -100;
+            max-height: 100%;
+            max-width: 50%;
+            z-index: -100;
+            float: right;
+            margin-left: 0;
+        }
+
+        #prezziImg {
+            position: relative;
+            z-index: -100;
+            max-height: 50%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #achierivoltaImg {
+            position: relative;
+            z-index: -100;
+            max-height: 100%;
+            max-width: 50%;
+            z-index: -100;
+            float: left;
+            margin-left: 0;
+        }
+
+        @media (max-width: 768px) {
+            #organizzazioneImg {
+                max-width: 25vw;
+                max-height: 25vh;
+            }
+
+            #chisiamoImg {
+                max-width: 25vw;
+                max-height: 25vh;
+            }
+        }
+
+        @media(min-width: 769px) {
+            #organizzazioneImg {
+                max-width: 15vw;
+            }
+
+            #chisiamoImg {
+                max-width: 15vw;
+                max-height: 15vh;
+            }
+        }
+
+        #organizzazioneImg {
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 10vh;
+        }
+
+        #chisiamoImg {
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 10vh;
+        }
+
+        #pointingRightImg {
+            max-width: 50%;
+            max-height: 18vh;
+            object-fit: contain;
+        }
+
+        #pointingLeftImg {
+            max-width: 50%;
+            max-height: 18vh;
+            object-fit: contain;
+        }
+
+        #helpImg {
+            max-width: 100%;
+            max-height: 25vh;
+            margin-top: 2rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #privacyImg {
+            max-width: 100%;
+            max-height: 18vh;
+            object-fit: contain;
+            margin: 0;
+        }
+
+        #tesseramentoImg {
+            max-width: 100%;
+            max-height: 18vh;
+            object-fit: contain;
+            margin: 0;
+        }
+
+        #presentazioneImg {
+            max-width: 100%;
+            max-height: 30vh;
+            object-fit: contain;
+            margin: 0 auto 1rem auto;
+        }
+
+        #pensieroImg {
+            max-width: 100%;
+            max-height: 20vh;
+            margin: 0 auto 1rem auto;
+        }
+
+        @media (max-width: 768px) {
+            #presentazioneImg,
+            #pensieroImg {
+                max-height: 18vh;
+                margin-bottom: 1rem;
+            }
+        }
+
+        #bkgHero {
+            position: absolute;
+            min-width: 100vw;
+            min-height: calc(100vh - var(--nav-height));
+            top: var(--nav-height);
+        }
+
+        #bkgHero img {
+            min-height: 100vh;
+            min-width: 100vw;
+            height: auto;
+            width: auto;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0.5;
+            z-index: 0;
+        }
+    </style>
+</head>
+
+<body class="bg-base-100 min-h-screen text-base-content">
+    <!-- Navbar -->
+    <nav class="navbar bg-base-100/95 sticky top-0 z-30 px-3 shadow-sm flex" id="nav-menu">
+        <!-- Navbar start-->
+        <div class="navbar-start">
+            <!-- quello che si vede del drawer in modo normale -->
+            <div class="drawer flex-end">
+                <input id="mobile-menu-drawer" type="checkbox" class="drawer-toggle" />
+                <div class="drawer-content">
+                    <label tabindex="0" role="button" for="mobile-menu-drawer"
+                        class="btn btn-ghost btn-circle drawer-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </label>
+                </div>
+                <!-- contenuto del drawer-->
+                <div class="drawer-side">
+                    <label for="mobile-menu-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+                    <ul tabindex="-1"
+                        class="menu menu-lg dropdown-content dropdown-end bg-base-100 rounded-box z-10  w-52 shadow  min-h-screen">
+                        <li class="flex flex-row">
+
+                            <a href="#home" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer')?document.getElementById('mobile-menu-drawer').checked=false:null">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path fill-rule="evenodd"
+                                        d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+
+                                Home</a>
+                        </li>
+                        <li><a href="#chi-siamo" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer')?document.getElementById('mobile-menu-drawer').checked=false:null">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path
+                                        d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" />
+                                </svg>
+                                Chi
+                                siamo</a></li>
+                        <li><a href="#organizzazione" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer')?document.getElementById('mobile-menu-drawer').checked=false:null"><svg
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path fill-rule="evenodd"
+                                        d="m9.69 18.933.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Organizzazione</a></li>
+                        <li><a href="#la-nostra-animazione" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer')?document.getElementById('mobile-menu-drawer').checked=false:null">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path
+                                        d="M12 4.467c0-.405.262-.75.559-1.027.276-.257.441-.584.441-.94 0-.828-.895-1.5-2-1.5s-2 .672-2 1.5c0 .362.171.694.456.953.29.265.544.6.544.994a.968.968 0 0 1-1.024.974 39.655 39.655 0 0 1-3.014-.306.75.75 0 0 0-.847.847c.14.993.242 1.999.306 3.014A.968.968 0 0 1 4.447 10c-.393 0-.729-.253-.994-.544C3.194 9.17 2.862 9 2.5 9 1.672 9 1 9.895 1 11s.672 2 1.5 2c.356 0 .683-.165.94-.441.276-.297.622-.559 1.027-.559a.997.997 0 0 1 1.004 1.03 39.747 39.747 0 0 1-.319 3.734.75.75 0 0 0 .64.842c1.05.146 2.111.252 3.184.318A.97.97 0 0 0 10 16.948c0-.394-.254-.73-.545-.995C9.171 15.693 9 15.362 9 15c0-.828.895-1.5 2-1.5s2 .672 2 1.5c0 .356-.165.683-.441.94-.297.276-.559.622-.559 1.027a.998.998 0 0 0 1.03 1.005c1.337-.05 2.659-.162 3.961-.337a.75.75 0 0 0 .644-.644c.175-1.302.288-2.624.337-3.961A.998.998 0 0 0 16.967 12c-.405 0-.75.262-1.027.559-.257.276-.584.441-.94.441-.828 0-1.5-.895-1.5-2s.672-2 1.5-2c.362 0 .694.17.953.455.265.291.601.545.995.545a.97.97 0 0 0 .976-1.024 41.159 41.159 0 0 0-.318-3.184.75.75 0 0 0-.842-.64c-1.228.164-2.473.271-3.734.319A.997.997 0 0 1 12 4.467Z" />
+                                </svg>
+                                La
+                                nostra animazione</a></li>
+                        <li><a href="#collaborazioni" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer')?document.getElementById('mobile-menu-drawer').checked=false:null">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path
+                                        d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM1.49 15.326a.78.78 0 0 1-.358-.442 3 3 0 0 1 4.308-3.516 6.484 6.484 0 0 0-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 0 1-2.07-.655ZM16.44 15.98a4.97 4.97 0 0 0 2.07-.654.78.78 0 0 0 .357-.442 3 3 0 0 0-4.308-3.517 6.484 6.484 0 0 1 1.907 3.96 2.32 2.32 0 0 1-.026.654ZM18 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5.304 16.19a.844.844 0 0 1-.277-.71 5 5 0 0 1 9.947 0 .843.843 0 0 1-.277.71A6.975 6.975 0 0 1 10 18a6.974 6.974 0 0 1-4.696-1.81Z" />
+                                </svg>
+
+                                Collaborazioni
+                                & Uscite</a></li>
+                        <li><a href="#modulistica" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer')?document.getElementById('mobile-menu-drawer').checked=false:null"><svg
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path
+                                        d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
+                                </svg>
+                                Modulistica</a>
+                        </li>
+
+
+                        <li><a href="#contatti" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer')?document.getElementById('mobile-menu-drawer').checked=false:null"><svg
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path fill-rule="evenodd"
+                                        d="M1 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V6Zm4 1.5a2 2 0 1 1 4 0 2 2 0 0 1-4 0Zm2 3a4 4 0 0 0-3.665 2.395.75.75 0 0 0 .416 1A8.98 8.98 0 0 0 7 14.5a8.98 8.98 0 0 0 3.249-.604.75.75 0 0 0 .416-1.001A4.001 4.001 0 0 0 7 10.5Zm5-3.75a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Zm0 6.5a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Zm.75-4a.75.75 0 0 0 0 1.5h2.5a.75.75 0 0 0 0-1.5h-2.5Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+
+                                Contatti</a>
+                        </li>
+                        <li>
+                            <div class="divider"></div>
+                        </li>
+                        <li><a href="planner.html" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer')?document.getElementById('mobile-menu-drawer').checked=false:null">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                                </svg>
+
+                                Planner
+                            </a></li>
+                        <!-- theme toggle -->
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- navbar center -->
+        <div class="navbar-center">
+            <div class="flex-1">
+                <h1 href="#home"> <span class="brand text-xl font-bold text-primary" id="titolo">Animazione
+                        Estiva</span></h1>
+            </div>
+        </div>
+        <!-- navbar end-->
+        <div class="navbar-end">
+            <label class="swap swap-rotate">
+                <input type="checkbox" class="theme-controller" value="synthwave" />
+                <svg class="swap-off h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                        d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+                </svg>
+                <svg class="swap-on h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                        d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
+                </svg>
+            </label>
+        </div>
+
+
+    </nav>
+
+    <main class="max-w-2xl md:max-w-3xl mx-auto px-3">
+        <!-- Hero (Landing) -->
+        <section id="home"
+            class="hero min-h-[65vh] flex flex-col justify-center items-center text-center mt-2 mb-9 mx-auto pt-0">
+            <div id="bkgHero">
+                <img src="./img/index/hero.avif" id="bkgheroImage">
+            </div>
+            
+            <div class="max-w-xl mx-auto z-1">
+                <h1 class="text-4xl md:text-5xl font-bold text-primary mb-3">Un’estate di sorrisi <br> con NOI</h1>
+                <p class="text-base text-base-content/80 mb-6">
+                    cosa stai aspettando per rendere questa estate indimenticabile?
+
+                </p>
+                <a href="#modulistica" class="btn btn-primary btn-lg mt-2 transition-all">Iscriviti ora</a>
+            </div>
+
+        </section>
+
+
+        <!-- Chi siamo -->
+        <section id="chi-siamo" class="">
+            <div class="divider-int divider"></div>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-2 mx-auto">Chi siamo</h2>
+            <p class="text-base mb-3">
+                Siamo un gruppo di ragazzi dai 16 anni in su che amano stare con i bambini e dedicare loro energie e
+                passione per regalare un'estate indimenticabile
+            </p>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">I nostri valori</h3>
+            <ul class="list-disc ml-7 mb-3 text-base">
+                <li>Crescita personale</li>
+                <li>Amicizia</li>
+                <li>Rispetto</li>
+                <li>Collaborazione</li>
+            </ul>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">Il nostro obiettivo</h3>
+            <p class="text-base mb-3">
+                un'estate indimenticabile, sicura e ricca di divertimento.
+            </p>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">La nostra preparazione</h3>
+            <p class="text-base mb-3">
+                tutti noi abbiamo frequentato corsi di primo soccorso, educazione e siamo abilitati
+                all’uso del DAE.
+            </p>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">La nostra esperienza</h3>
+            <p class="text-base mb-3">
+                Da diversi anni organizziamo centri estivi, collaborando con numeroi enti locali
+            </p>
+            <img src="./img/index/logo Gruppo Giovani.png" alt="logo gruppo giovani" id="chisiamoImg">
+        </section>
+
+
+        <!-- Organizzazione -->
+        <section id="organizzazione" class="">
+                    <div class="divider-int divider"></div>
+
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 mx-auto">Organizzazione</h2>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">Sede:</h3>
+            <p class="text-base mb-3">C.R.G.</p>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">Periodo:</h3>
+            <p class="text-base mb-3">Dal 1 Luglio al 31 Luglio</p>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">Orari:</h3>
+            <p class="text-base mb-3">7:30-13:30, dal lunedì al venerdì</p>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">Giornata tipo:</h3>
+            <ul class="list-disc ml-7 text-base">
+                <li>7:30-8:30 Accoglienza</li>
+                <li>8:30-10:30 Prima parte di attività con Giochi di gruppo</li>
+                <li>10:30-10:45 Ricreazione e pausa</li>
+                <li>10:45-12:00 Seconda parte di attività con Laboratori e Sport</li>
+                <li>12:00-13:30 Chiusura e saluti con gioco libero</li>
+            </ul>
+            <img src="./img/index/logo NOI CRG.png" alt="logo NOI" id="organizzazioneImg">
+        </section>
+
+
+        <!-- Storia -->
+        <section id="la-nostra-animazione" class="">
+                    <div class="divider-int divider"></div>
+
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 mx-auto">La nostra animazione</h2>
+            <div class="w-full max-w-xl mx-auto space-y-3">
+                <!-- Accordion: A chi è rivolta -->
+                <div class="collapse collapse-arrow bg-base-200">
+                    <input type="radio" name="accordion-la-nostra-animazione" />
+                    <div class="collapse-title text-lg font-semibold">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">A chi è rivolta</h3>
+                    </div>
+                    <div class="collapse-content">
+                        <p class="text-base mb-0">
+                            <img src="./img/index/achierivolta.png" id="achierivoltaImg">
+
+                            Il nostro centro estivo è pensato per bambini e ragazzi dai 6 ai 13 anni.<br>
+                            Un ambiente sicuro, divertente, dove ogni partecipante può esprimersi e crescere
+                            accompagnato da animatori preparati.
+                        </p>
+                    </div>
+                </div>
+                <!-- Accordion: La storia -->
+                <div class="collapse collapse-arrow bg-base-200">
+                    <input type="radio" name="accordion-la-nostra-animazione" />
+                    <div class="collapse-title text-lg font-semibold">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">
+                            Il filo conduttore </h3>
+                    </div>
+                    <div class="collapse-content">
+                        <img src="./img/index/filoConduttore.png" alt="filoconduttore" id="filoConduttoreImg">
+
+                        <h4 class="text-md md:text-lg font-semibold text-primary mb-1">Po e i 5 Cicloni hanno bisogno di
+                            te!</h4>
+                        <p class="text-base mb-3">
+                            La Valle della Pace è in pericolo!
+                            Po deve allenarsi duramente per poterla proteggere e chiederà aiuto al suo maestro Shifu e
+                            ai 5 Cicloni, i suoi amici più fidati:
+                            Tigre, Scimmia, Gru, Vipera e Mantide.
+                        </p>
+
+                        <h4 class="text-md md:text-lg font-semibold text-primary mb-1">Unisciti a loro!</h4>
+                        <p class="text-base mb-3">
+                            Ogni giorno insieme a Po e ai 5 Cicloni vivrai giochi, laboratori, sport e sorprese.<br>
+                            Chissa cosa avranno in serbo per voi... rtext-base mb-3iusciremo a proteggere la Valle della
+                            Pace?
+                        </p>
+
+                    </div>
+                </div>
+                <!-- Accordion: Attività -->
+                <div class="collapse collapse-arrow bg-base-200">
+                    <input type="radio" name="accordion-la-nostra-animazione" />
+                    <div class="collapse-title text-lg font-semibold">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1 ">
+                            Attività
+                        </h3>
+                    </div>
+                    <div class="collapse-content">
+                        <img src="./img/index/attivita.png" id="attivitaImg">
+                        <ul class="list-disc ml-7 text-base">
+                            <li>Laboratori manuali e creativi</li>
+                            <li>Attività ludiche e sportive</li>
+                            <li>Uscite sul territorio locale</li>
+                            <li>Incontri con esperti e professionisti</li>
+                            <li>Gite fuoriporta</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="collapse collapse-arrow bg-base-200">
+                    <input type="radio" name="accordion-la-nostra-animazione" />
+                    <div class="collapse-title text-lg font-semibold">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">
+                            I nostri prezzi
+                        </h3>
+                    </div>
+                    <div class="collapse-content">
+                        <div class="space-y-3">
+                            <div>
+                                <h4 class="text-md md:text-lg font-semibold text-primary mb-1">Animazione</h4>
+                                <p class="text-base">40€ a settimana</p>
+                            </div>
+                            <div>
+                                <h4 class="text-md md:text-lg font-semibold text-primary mb-1">Tesseramento al circolo NOI</h4>
+                                <p class="text-base">5€ a bambino (validità annuale, include assicurazione)</p>
+                            </div>
+                            <div>
+                                <h4 class="text-md md:text-lg font-semibold text-primary mb-1">Sconti disponibili</h4>
+                                <ul class="list-disc ml-7 text-base space-y-1">
+                                    <li>Sconto per fratelli</li>
+                                    <li>Sconto per settimane pagate assieme</li>
+                                </ul>
+                            </div>
+                            <p class="text-base text-base-content/80 pt-2 border-t border-base-300">
+                                Per costi e modalità di pagamento contatta gli organizzatori
+                            </p>
+                        </div>
+                        <img src="./img/index/prezzi.png" id="prezziImg">
+                    </div>
+                </div>
+                <!-- Accordion: Presentazione -->
+                <div class="collapse collapse-arrow bg-base-200">
+                    <input type="radio" name="accordion-la-nostra-animazione" />
+                    <div class="collapse-title text-lg font-semibold">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">
+                            La nostra presentazione
+                        </h3>
+                    </div>
+                    <div class="collapse-content">
+                        <div class="flex flex-col gap-3">
+                            <img src="./img/index/presentazione.png" id="presentazioneImg" class="w-full">
+                            <p class="text-base">
+                                Vuoi sapere tutto sul nostro centro estivo prima di iscriverti?
+                                Abbiamo preparato una presentazione completa: chi siamo, il programma, le attività,
+                                i valori e molto altro.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <button
+                                    onclick="window.open('https://drive.google.com/file/d/1_mfnXHaJJFj4H0IsHohtqP_4dVQ-vx0_/view?usp=sharing','_blank')"
+                                    class="btn btn-primary">Scarica PDF</button>
+                                <button
+                                    onclick="window.open('https://drive.google.com/file/d/1_mfnXHaJJFj4H0IsHohtqP_4dVQ-vx0_/view?usp=sharing','_blank')"
+                                    class="btn btn-accent">Scarica locandina</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Collaborazioni -->
+        <section id="collaborazioni" class="">
+                    <div class="divider-int divider"></div>
+
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 mx-auto">Collaborazioni & Uscite</h2>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">
+                Cresciamo insieme, anche fuori dal centro!
+            </h3>
+            <p class="text-base mb-3">
+                Grazie alle nostre collaborazioni con associazioni e professionisti, vivrai esperienze uniche e uscite
+                didattiche che renderanno la tua estate ancora più speciale.
+            </p>
+            <ul class="list-disc ml-7 mb-3 text-base">
+                <li>Visita alla Caserma dei pompieri</li>
+                <li>Giornata di relax e divertimento a Castelbeach</li>
+                <li>Incontri con gli esperti delle stelle</li>
+                <li>Uscita al Parco degli alberi parlanti</li>
+            </ul>
+            <p class="text-base mb-4">
+                Ogni attività è pensata per farti scoprire nuove passioni, fare amicizie e imparare divertendoti fuori
+                dagli schemi!
+            </p>
+        </section>
+
+        <!-- Modulistica -->
+        <section id="modulistica" class="flex flex-col items-center justify-center text-center px-2">
+                    <div class="divider-int divider"></div>
+
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-2 mx-auto">Modulistica</h2>
+
+            <p class="max-w-xl mb-6 text-base text-center">
+                Qui trovi tutti i moduli necessari per l’iscrizione.<br>
+                Leggi attentamente le istruzioni nella sezione Serve aiuto
+            </p>
+
+            <div class="w-full max-w-md space-y-2">
+
+                <!-- HELP ACCORDION PANNELLO EVIDENZIATO -->
+                <div class="collapse collapse-arrow collapse-help">
+
+                    <input type="radio" name="accordion-modulistica" />
+
+                    <div class="collapse-title text-lg font-semibold">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1 ">
+                            Serve aiuto?
+                        </h3>
+                    </div>
+                    <div class="collapse-content text-left">
+                        <p class="font-medium mb-2">
+                            Istruzioni e informazioni importanti:
+                        </p>
+                        <ul class="list-disc ml-6 space-y-1 text-base mb-3">
+                            <li>
+                                Per il <b>costo e le modalità di pagamento</b> bisogna rivolgersi
+                                direttamente agli organizzatori nei giorni di apertura
+                            </li>
+                            <li>
+                                Il <b>modulo privacy</b> è obbligatorio per tutti i partecipanti
+                            </li>
+                            <li>
+                                Il <b>tesseramento</b> è necessario perché comprende la copertura assicurativa.
+                            </li>
+                            <li>
+                                Se un bambino esce <b>con persone delegate</b>, bisogna portare anche una copia della
+                                carta d'identità
+                                dei delegati.
+                            </li>
+                        </ul>
+                        <img src="./img/index/help.png" alt="help" id="helpImg">
+                    </div>
+                </div>
+
+                <!-- Iscrizione cartacea -->
+                <div class="collapse collapse-arrow bg-base-200">
+                    <input type="radio" name="accordion-modulistica" />
+                    <div class="collapse-title text-lg font-semibold">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1 ">
+                            Iscrizione cartacea
+                        </h3>
+                    </div>
+                    <div class="collapse-content">
+                        <div class="flex flex-row mb-3">
+                            <img src="./img/index/PointingRight.png" alt="pointing right" id="pointingRightImg"
+                                class="col-2 ml-0 pd-0">
+
+                            <p class="text-base text-left col-4">
+                                Scarica il modulo, compilalo a mano e consegnalo direttamente agli organizzatori il
+                                giorno
+                                dell'iscrizione.
+                            </p>
+                        </div>
+                        <button
+                            onclick="window.open('https://drive.google.com/file/d/1RniiOTN0TbrrbTAXTREB5Gc7ZxQcJ9ee/view?usp=sharing','_blank')"
+                            class="btn w-full btn-accent">Scarica modulo cartaceo (PDF)</button>
+                    </div>
+                </div>
+                <!-- Iscrizione online -->
+                <div class="collapse collapse-arrow bg-base-200">
+                    <input type="radio" name="accordion-modulistica" />
+                    <div class="collapse-title text-lg font-semibold flex items-center justify-center gap-2">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1 ">
+                            Iscrizione online
+                        </h3>
+                    </div>
+                    <div class="collapse-content">
+                        <div class="flex flex-row mb-3">
+                            <p class="text-base col-4 text-left">
+                                Compila il modulo digitale, riceverai una email con il PDF riassuntivo che potrai
+                                stampare,
+                                firmare e portare di persona.
+                                In alternativa, possiamo stamparlo noi e lo firmerai quando verrai.
+                            </p>
+                            <img src="./img/index/PointingLeft.png" alt="pointing left" id="pointingLeftImg"
+                                class="col-2 mr-0 pr-0">
+                        </div>
+
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfDDnFaVtwnGQpUSan93tdB-EWZ2Hi8et6zkKnlK4ISHgmqKg/viewform?usp=header" target="_blank"
+                            class="btn btn-warning w-full">Compila modulo online</a>
+                    </div>
+                </div>
+                <!-- Privacy -->
+                <div class="collapse collapse-arrow bg-base-200">
+                    <input type="radio" name="accordion-modulistica" />
+                    <div class="collapse-title text-lg font-semibold">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1 ">
+                            Privacy
+                        </h3>
+                    </div>
+                    <div class="collapse-content">
+                        <div class="flex flex-row mb-3">
+                            <p class="text-base text-left col-4">
+                                Il modulo privacy è <b>obbligatorio</b>. Stampalo, firmalo e portalo, oppure puoi firmarlo
+                                quando vieni di persona.
+                            </p>
+                            <img src="./img/index/paper3.png" alt="privacy" id="privacyImg" class="col-2 mr-0 pr-0">
+                        </div>
+                        <button
+                            onclick="window.open('https://drive.google.com/file/d/1u_-iflYILjWwMozQnQRgip1bwVKD_fH8/view?usp=sharing','_blank');"
+                            class="btn btn-accent w-full">Scarica modulo privacy</button>
+                    </div>
+                </div>
+                <!-- Tesseramento -->
+                <div class="collapse collapse-arrow border-l-4 border-blue-500 bg-base-200">
+                    <input type="radio" name="accordion-modulistica" />
+                    <div class="collapse-title text-lg font-semibold">
+                        <h3 class="text-lg md:text-lg font-semibold text-primary mb-1 ">
+                            Tesseramento
+                        </h3>
+                    </div>
+                    <div class="collapse-content">
+                        <div class="flex flex-row mb-3">
+                            <img src="./img/index/paper2.png" alt="tesseramento" id="tesseramentoImg" class="col-2 ml-0 pd-0">
+                            <p class="text-base text-left col-4">
+                                Il tesseramento è <b>obbligatorio</b> e include l'assicurazione. Puoi
+                                scaricare il modulo, stamparlo e firmarlo da casa, oppure compilarlo e firmarlo direttamente
+                                quando vieni.
+                            </p>
+                        </div>
+                        <button
+                            onClick="window.open('https://drive.google.com/file/d/1jm2dA6sW-XJg9Rmv7OB9pNRPISlw1P-F/view?usp=sharing','_blank');"
+                            class="btn btn-accent w-full">Scarica modulo tesseramento</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contatti -->
+        <section id="contatti" class="pb-10">
+                    <div class="divider-int divider"></div>
+
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-2 mx-auto">Contatti</h2>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">Quando ci trovate:</h3>
+            <ul class="list-disc ml-7 mb-3 text-base">
+                <li>Domenica 24/05/2026 dalle 10:30 alle 12:30 in C.R.G.</li>
+                <li>Domenica 31/05/2026 dalle 10:30 alle 13:30 in C.R.G.</li>
+                <li>Domenica 07/06/2026 dalle 10:30 alle 13:30 in C.R.G.</li>
+                <li>Domenica 14/06/2026 dalle 10:30 alle 13:30 in C.R.G.</li>
+                <li>Domenica 21/06/2026 dalle 10:30 alle 13:30 in C.R.G.</li>
+
+            </ul>
+            <h3 class="text-lg md:text-lg font-semibold text-primary mb-1">I nostri recapiti:</h3>
+
+            <div class="text-base space-y-1">
+                <div>Email: <a href="mailto:gruppogiovanicrg@gmail.com"
+                        class="link link-secondary">gruppogiovanicrg@gmail.com</a></div>
+                <div>Tel: <a href="tel:+393792127682" class="link link-secondary">+39 379 212 7682</a></div>
+                <div>Seguici su <a href="#" class="link link-secondary">Instagram</a> e <a href="#"
+                        class="link link-secondary">Facebook</a></div>
+            </div>
+
+            <div class="divider-minimal"></div>
+            <div class="collapse collapse-arrow bg-base-200">
+                <input type="checkbox" />
+                <div class="collapse-title">
+                    <h3 class="text-lg font-semibold text-primary">Feedback</h3>
+                </div>
+                <div class="collapse-content">
+                    <div class="flex flex-col gap-3">
+                        <img src="./img/index/pensiero.png" id="pensieroImg" class="w-full">
+                        <p class="text-base">Hai idee, suggerimenti o vuoi lasciarci un feedback? Ci fa molto piacere sentirti!</p>
+                        <button
+                            onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSfzHxHb_CEsxzo219rQTWAsoWsAe6VSlEPBz35Z_A5euGis_A/viewform?usp=dialog','_blank')"
+                            class="btn btn-primary w-full">
+                            Scrivi pure, è anonimo!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+</body>
+
+</html>
