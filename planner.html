@@ -198,17 +198,16 @@
             const drawerToggle = document.getElementById('mobile-menu-drawer');
             if (drawerToggle) {
                 drawerToggle.addEventListener('change', function () {
-                    document.documentElement.style.overflow = this.checked ? 'hidden' : 'auto';
+                    document.documentElement.style.overflowY = this.checked ? 'hidden' : '';
                 });
             }
 
             navLinks.forEach(link => {
                 link.addEventListener('click', function (e) {
                     const href = this.getAttribute('href') || '';
-                    // Chiudi sempre il drawer e ripristina overflow prima di qualsiasi scroll
                     if (drawerToggle) {
                         drawerToggle.checked = false;
-                        document.documentElement.style.overflow = 'auto';
+                        document.documentElement.style.overflowY = '';
                     }
                     // Gestisci manualmente lo scroll per i link interni:
                     // quando il drawer era aperto overflow:hidden blocca lo scroll nativo
@@ -216,9 +215,13 @@
                         e.preventDefault();
                         const target = document.getElementById(href.slice(1));
                         if (target) {
-                            setTimeout(() => {
-                                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }, 10);
+                            requestAnimationFrame(() => {
+                                requestAnimationFrame(() => {
+                                    const offset = nav ? nav.offsetHeight : 64;
+                                    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+                                    window.scrollTo({ top, behavior: 'smooth' });
+                                });
+                            });
                         }
                         setTimeout(() => activateMenu(navLinks), 400);
                     }
@@ -685,7 +688,7 @@
                     const actions = document.createElement('div');
                     actions.className = 'card-actions justify-center mt-2';
                     const a = document.createElement('a');
-                    a.href = uscita.sito_web; a.target = '_blank';
+                    a.href = uscita.sito_web; a.target = '_blank'; a.rel = 'noopener noreferrer';
                     a.className = 'btn btn-outline btn-secondary btn-sm'; a.textContent = 'Sito web';
                     actions.appendChild(a); body.appendChild(actions);
                 }
