@@ -81,6 +81,7 @@
             createSport();
             createOspiti();
             createUsciteAperte();
+            createProgrammaCompleto();
             setTimeout(() => activateMenu(document.querySelectorAll('.menu-link')), 50);
         }
 
@@ -186,34 +187,45 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             const navLinks = document.querySelectorAll('.menu-link');
-            
-            // Applico throttle all'evento scroll per migliorare la performance
+            const nav      = document.getElementById("nav-menu");
+            const navH     = nav ? nav.offsetHeight + 'px' : '64px';
+            document.documentElement.style.setProperty("--planner-nav-h", navH);
+
             const throttledScroll = throttle(() => activateMenu(navLinks), 200);
             window.addEventListener('scroll', throttledScroll, { passive: true });
             window.addEventListener('resize', () => activateMenu(navLinks));
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => setTimeout(() => activateMenu(navLinks), 80));
-            });
-            activateMenu(navLinks);
-            const nav = document.getElementById("nav-menu");
-            const navH = nav ? nav.offsetHeight + 'px' : '64px';
-            document.documentElement.style.setProperty("--planner-nav-h", navH);
-            document.documentElement.style.scrollPaddingTop = navH;
 
             const drawerToggle = document.getElementById('mobile-menu-drawer');
             if (drawerToggle) {
                 drawerToggle.addEventListener('change', function () {
                     document.documentElement.style.overflow = this.checked ? 'hidden' : 'auto';
                 });
-                
-                // Chiudi drawer e ripristina scroll quando clicchi un link dal menu
-                navLinks.forEach(link => {
-                    link.addEventListener('click', function() {
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href') || '';
+                    // Chiudi sempre il drawer e ripristina overflow prima di qualsiasi scroll
+                    if (drawerToggle) {
                         drawerToggle.checked = false;
                         document.documentElement.style.overflow = 'auto';
-                    });
+                    }
+                    // Gestisci manualmente lo scroll per i link interni:
+                    // quando il drawer era aperto overflow:hidden blocca lo scroll nativo
+                    if (href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.getElementById(href.slice(1));
+                        if (target) {
+                            setTimeout(() => {
+                                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 10);
+                        }
+                        setTimeout(() => activateMenu(navLinks), 400);
+                    }
                 });
-            }
+            });
+
+            activateMenu(navLinks);
         });
     </script>
 
@@ -716,7 +728,7 @@
 
             let inner = `<div class="planner-scroll py-2"><div class="planner-track">`;
             week.forEach(lab => {
-                const diffClass = lab.difficoltà === 'facile' ? 'badge-success' : lab.difficoltà === 'media' ? 'badge-warning' : 'badge-error';
+                const diffClass = lab.difficoltà === 'facile' ? 'badge-soft badge-success' : lab.difficoltà === 'media' ? 'badge-soft badge-info' : 'badge-soft badge-error';
                 inner += `<div class="planner-item"><div class="card planner-card bg-base-100 shadow-sm border-0">`;
                 if (lab.immagineUrl) inner += `<figure><img src="${esc(lab.immagineUrl)}" alt="${esc(lab.titolo)}" class="imageCarouselLaboratorio rounded-xl object-cover w-full"/></figure>`;
                 inner += `<div class="card-body">
@@ -828,6 +840,152 @@
             container.appendChild(scroll);
         }
 
+        function createProgrammaCompleto() {
+            const container = document.getElementById('programmaContainer');
+            if (!container) return;
+
+            const weekSet = new Set();
+
+            function addWeekOf(dateObj) {
+                if (!dateObj) return;
+                const d = new Date(dateObj);
+                const diff = (d.getDay() + 6) % 7;
+                d.setDate(d.getDate() - diff);
+                d.setHours(0, 0, 0, 0);
+                weekSet.add(d.toISOString().slice(0, 10));
+            }
+
+            calendarioTot.forEach(c => {
+                const d = parseItalianDate(c.data_inizio);
+                if (d) weekSet.add(d.toISOString().slice(0, 10));
+            });
+            usciteTot.forEach(u => addWeekOf(parseItalianDate(u.data)));
+            sportTot.forEach(s => addWeekOf(parseItalianDate(s.data)));
+            ospitiTot.forEach(o => addWeekOf(parseItalianDate(o.data)));
+            laboratoriTot.forEach(l => {
+                const d = parseItalianDate(l.settimana);
+                if (d) weekSet.add(d.toISOString().slice(0, 10));
+            });
+
+            const sortedWeeks = [...weekSet].sort();
+            if (!sortedWeeks.length) {
+                vuoto(container, 'Nessun evento in programma');
+                return;
+            }
+
+            const fmtD = dt => `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
+
+            const extIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 opacity-40 ml-auto"><path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 0 0 1.06.053L16.5 4.44v2.81a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h2.553l-9.056 8.194a.75.75 0 0 0-.053 1.06Z" clip-rule="evenodd"/></svg>`;
+
+            let html = '<div class="planner-scroll py-2"><div class="planner-track">';
+
+            sortedWeeks.forEach(weekIso => {
+                const [y, m, d] = weekIso.split('-').map(Number);
+                const monday = new Date(y, m - 1, d);
+                const friday = new Date(monday);
+                friday.setDate(monday.getDate() + 4);
+                friday.setHours(23, 59, 59, 999);
+
+                const usciteW = usciteTot
+                    .filter(u => { const dt = parseItalianDate(u.data); return dt && dt >= monday && dt <= friday; })
+                    .sort((a, b) => parseItalianDate(a.data) - parseItalianDate(b.data));
+
+                const ospitiW = ospitiTot
+                    .filter(o => { const dt = parseItalianDate(o.data); return dt && dt >= monday && dt <= friday; })
+                    .sort((a, b) => parseItalianDate(a.data) - parseItalianDate(b.data));
+
+                const sportW = sportTot.filter(s => { const dt = parseItalianDate(s.data); return dt && dt >= monday && dt <= friday; });
+                const sportUniq = [...new Map(sportW.map(s => [s.titolo, s])).values()];
+
+                const labW = laboratoriTot.filter(l => {
+                    const dt = parseItalianDate(l.settimana);
+                    return dt && dt.toISOString().slice(0, 10) === weekIso;
+                });
+
+                let sections = '';
+
+                if (usciteW.length) {
+                    const items = usciteW.map(u => {
+                        const etaBadges = (u.fascia_eta || []).map(f =>
+                            `<span class="badge badge-soft badge-secondary badge-xs">${esc(f)}</span>`
+                        ).join('');
+                        const hasLink = u.sito_web?.trim();
+                        const ws = hasLink ? `<a href="${esc(u.sito_web)}" target="_blank" rel="noopener" class="flex flex-wrap items-center gap-2 rounded-lg bg-secondary/10 px-3 py-2 hover:bg-secondary/20 transition-colors cursor-pointer">` : `<div class="flex flex-wrap items-center gap-2 rounded-lg bg-secondary/10 px-3 py-2">`;
+                        const we = hasLink ? '</a>' : '</div>';
+                        return `${ws}
+                            <span class="badge badge-secondary badge-sm font-bold shrink-0">${esc(u.data)}</span>
+                            <span class="font-semibold text-sm">${esc(u.titolo)}</span>
+                            ${u.luogo ? `<span class="text-xs opacity-60">${esc(u.luogo)}</span>` : ''}
+                            ${hasLink ? extIcon : ''}
+                            ${etaBadges ? `<div class="flex flex-wrap gap-1 w-full">${etaBadges}</div>` : ''}
+                        ${we}`;
+                    }).join('');
+                    sections += `<div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-secondary mb-2">🚌 Uscite</p>
+                        <div class="flex flex-col gap-1.5">${items}</div>
+                    </div>`;
+                }
+
+                if (ospitiW.length) {
+                    const items = ospitiW.map(o => {
+                        const hasLink = o.sito_web?.trim();
+                        const ws = hasLink ? `<a href="${esc(o.sito_web)}" target="_blank" rel="noopener" class="flex flex-wrap items-center gap-2 rounded-lg bg-accent/10 px-3 py-2 hover:bg-accent/20 transition-colors cursor-pointer">` : `<div class="flex flex-wrap items-center gap-2 rounded-lg bg-accent/10 px-3 py-2">`;
+                        const we = hasLink ? '</a>' : '</div>';
+                        return `${ws}
+                            <span class="badge badge-accent badge-sm font-bold shrink-0">${esc(o.data)}</span>
+                            <span class="font-semibold text-sm">${esc(o.titolo)}</span>
+                            ${o.descrizione ? `<span class="text-xs opacity-60">${esc(o.descrizione)}</span>` : ''}
+                            ${hasLink ? extIcon : ''}
+                        ${we}`;
+                    }).join('');
+                    sections += `<div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-accent mb-2">🌟 Ospiti</p>
+                        <div class="flex flex-col gap-1.5">${items}</div>
+                    </div>`;
+                }
+
+                if (sportUniq.length) {
+                    const badges = sportUniq.map(s =>
+                        `<span class="badge badge-soft badge-success">⚽ ${esc(s.titolo)}</span>`
+                    ).join('');
+                    sections += `<div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-success mb-2">⚽ Sport</p>
+                        <div class="flex flex-wrap gap-2">${badges}</div>
+                    </div>`;
+                }
+
+                if (labW.length) {
+                    const clsMap = { facile: 'badge-success', media: 'badge-info', difficile: 'badge-error' };
+                    const badges = labW.map(l =>
+                        `<span class="badge badge-soft ${clsMap[l.difficoltà] || 'badge-ghost'} text-xs">${esc(l.titolo)}</span>`
+                    ).join('');
+                    sections += `<div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-info mb-2">🔬 Laboratori</p>
+                        <div class="flex flex-wrap gap-2">${badges}</div>
+                    </div>`;
+                }
+
+                if (!sections) {
+                    sections = '<p class="text-sm opacity-40 italic">Nessun evento speciale questa settimana</p>';
+                }
+
+                html += `
+                    <div class="planner-item">
+                        <div class="card planner-card bg-base-100 shadow-md border-0 overflow-hidden">
+                            <div class="px-4 py-3 flex items-center gap-3 bg-gradient-to-r from-primary/15 to-transparent border-b border-primary/10">
+                                <span class="text-xl">📅</span>
+                                <h3 class="font-bold text-lg text-primary">Settimana ${fmtD(monday)} – ${fmtD(friday)}</h3>
+                                <span class="badge badge-primary badge-sm ml-auto">${monday.getFullYear()}</span>
+                            </div>
+                            <div class="card-body py-3 flex flex-col gap-4">${sections}</div>
+                        </div>
+                    </div>`;
+            });
+
+            html += '</div></div>';
+            container.innerHTML = html;
+        }
+
         /*  onload */
         document.addEventListener("DOMContentLoaded", async function () {
 
@@ -837,7 +995,7 @@
                 console.error(error);
                 const errorMessage = `<div class="alert alert-error shadow-md my-4">${error.message}</div>`;
                 ["calendarioContainer","usciteSettimanaContainer","laboratoriSettimanaContainer",
-                 "sportSettimanaContainer","ospitiSettimanaContainer","usciteAperteContainer"
+                 "sportSettimanaContainer","ospitiSettimanaContainer","usciteAperteContainer","programmaContainer"
                 ].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.innerHTML = errorMessage;
@@ -874,6 +1032,7 @@
                                     <path d="M10 2a6 6 0 0 0-6 6c0 1.887-.454 3.665-1.257 5.234a.75.75 0 0 0 .515 1.076 32.91 32.91 0 0 0 3.256.508 3.5 3.5 0 0 0 6.972 0 32.903 32.903 0 0 0 3.256-.508.75.75 0 0 0 .515-1.076A11.448 11.448 0 0 1 16 8a6 6 0 0 0-6-6ZM8.05 14.943a33.54 33.54 0 0 0 3.9 0 2 2 0 0 1-3.9 0Z" />
                                 </svg>
                                 Comunicazioni</a></li>
+                        <li class="menu-title text-xs tracking-widest">Settimana in corso</li>
                         <li><a href="#calendario" class="menu-link"
                                 onclick="document.getElementById('mobile-menu-drawer').checked=false">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -906,12 +1065,19 @@
                                     <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
                                 </svg>
                                 Ospiti</a></li>
+                        <li class="menu-title text-xs tracking-widest mt-1">Tutto il programma</li>
                         <li><a href="#uscite-aperte" class="menu-link"
                                 onclick="document.getElementById('mobile-menu-drawer').checked=false">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                                     <path fill-rule="evenodd" d="M15.75 3A2.25 2.25 0 0 1 18 5.25v1.214c0 .423-.277.788-.633 1.019A2.997 2.997 0 0 0 16 10c0 1.055.544 1.982 1.367 2.517.356.231.633.596.633 1.02v1.213A2.25 2.25 0 0 1 15.75 17H4.25A2.25 2.25 0 0 1 2 14.75v-1.213c0-.424.277-.789.633-1.02A2.998 2.998 0 0 0 4 10a2.997 2.997 0 0 0-1.367-2.517C2.277 7.252 2 6.887 2 6.463V5.25A2.25 2.25 0 0 1 4.25 3h11.5ZM13.5 7.396a.75.75 0 0 0-1.5 0v1.042a.75.75 0 0 0 1.5 0V7.396Zm0 4.167a.75.75 0 0 0-1.5 0v1.041a.75.75 0 0 0 1.5 0v-1.041Z" clip-rule="evenodd" />
                                 </svg>
                                 Uscite aperte</a></li>
+                        <li><a href="#programma" class="menu-link"
+                                onclick="document.getElementById('mobile-menu-drawer').checked=false">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                    <path fill-rule="evenodd" d="M4.5 2A1.5 1.5 0 0 0 3 3.5v13A1.5 1.5 0 0 0 4.5 18h11a1.5 1.5 0 0 0 1.5-1.5V7.621a1.5 1.5 0 0 0-.44-1.06l-4.12-4.122A1.5 1.5 0 0 0 11.378 2H4.5Zm2.25 8.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 3a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z" clip-rule="evenodd" />
+                                </svg>
+                                Programma completo</a></li>
                         <li><div class="divider"></div></li>
                         <li><a href="./index.html" class="menu-link"
                                 onclick="document.getElementById('mobile-menu-drawer').checked=false">
@@ -952,7 +1118,7 @@
 
         <!-- Calendario -->
         <section id="calendario">
-            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">La nostra settimana</h2>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">La nostra settimana <span class="badge badge-soft badge-primary badge-sm align-middle ml-1">in corso</span></h2>
             <p class="text-base mb-3 mx-auto text-center w-full" id="calendarioDescription">
                 Scorri per vedere tutta la nostra settimana
             </p>
@@ -962,7 +1128,7 @@
         <!-- Uscite -->
         <section id="uscite">
             <div class="divider"></div>
-            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Le uscite di questa settimana</h2>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Le uscite <span class="badge badge-soft badge-primary badge-sm align-middle ml-1">questa settimana</span></h2>
             <p class="text-base mb-3 text-center w-full" id="usciteSettimanaDescription">
                 Scorri per vedere tutte le uscite previste per questa settimana
             </p>
@@ -972,7 +1138,7 @@
         <!-- Laboratori -->
         <section id="laboratori">
             <div class="divider"></div>
-            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Laboratori della settimana</h2>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Laboratori <span class="badge badge-soft badge-primary badge-sm align-middle ml-1">questa settimana</span></h2>
             <p class="text-base mb-3 text-center w-full" id="laboratoriSettimanaDescription">
                 Scorri per vedere tutti i laboratori previsti per questa settimana
             </p>
@@ -982,7 +1148,7 @@
         <!-- Sport -->
         <section id="sport">
             <div class="divider"></div>
-            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Sport della settimana</h2>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Sport <span class="badge badge-soft badge-primary badge-sm align-middle ml-1">questa settimana</span></h2>
             <p class="text-base mb-3 text-center w-full" id="sportSettimanaDescription">
                 Scorri per vedere tutti gli sport previsti per questa settimana
             </p>
@@ -992,7 +1158,7 @@
         <!-- Ospiti -->
         <section id="ospiti">
             <div class="divider"></div>
-            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Ospiti della settimana</h2>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Ospiti <span class="badge badge-soft badge-primary badge-sm align-middle ml-1">questa settimana</span></h2>
             <p class="text-base mb-3 text-center w-full" id="ospitiSettimanaDescription">
                 Scorri per vedere tutti gli ospiti previsti per questa settimana
             </p>
@@ -1002,11 +1168,21 @@
         <!-- Uscite aperte -->
         <section id="uscite-aperte">
             <div class="divider"></div>
-            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Uscite aperte alle iscrizioni</h2>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Uscite aperte alle iscrizioni <span class="badge badge-soft badge-success badge-sm align-middle ml-1">da oggi</span></h2>
             <p class="text-base mb-3 text-center w-full" id="usciteAperteDescription">
                 Scorri per vedere le uscite con le iscrizioni attualmente aperte
             </p>
             <div id="usciteAperteContainer"></div>
+        </section>
+
+        <!-- Programma completo -->
+        <section id="programma">
+            <div class="divider"></div>
+            <h2 class="text-2xl md:text-3xl text-primary font-semibold mb-4 text-center">Programma completo <span class="badge badge-soft badge-secondary badge-sm align-middle ml-1">tutta l'estate</span></h2>
+            <p class="text-base mb-3 text-center w-full">
+                Tutto il programma dell'estate, settimana per settimana
+            </p>
+            <div id="programmaContainer"></div>
         </section>
     </main>
 
