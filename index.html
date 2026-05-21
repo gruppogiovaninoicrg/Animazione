@@ -212,17 +212,16 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            //Tutti i link del menu solo quando ho cariato il contenuto
             const navLinks = document.querySelectorAll('.menu-link');
+            const nav = document.getElementById("nav-menu");
 
-            // Applico throttle all'evento scroll per migliorare la performance
             const throttledScroll = throttle(() => activateMenu(navLinks), 200);
             window.addEventListener('scroll', throttledScroll, { passive: true });
             window.addEventListener('resize', () => activateMenu(navLinks));
             activateMenu(navLinks);
             document.documentElement.style.setProperty(
                 "--nav-height",
-                document.getElementById("nav-menu").offsetHeight + "px"
+                nav ? nav.offsetHeight + "px" : "64px"
             );
 
             const drawerToggle = document.getElementById('mobile-menu-drawer');
@@ -230,16 +229,27 @@
                 drawerToggle.addEventListener('change', function () {
                     document.documentElement.style.overflow = this.checked ? 'hidden' : 'auto';
                 });
-                
-                // Chiudi drawer e ripristina scroll quando clicchi un link dal menu
-                const menuLinks = document.querySelectorAll('.menu-link');
-                menuLinks.forEach(link => {
-                    link.addEventListener('click', function() {
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href') || '';
+                    if (drawerToggle) {
                         drawerToggle.checked = false;
                         document.documentElement.style.overflow = 'auto';
-                    });
+                    }
+                    if (href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.getElementById(href.slice(1));
+                        if (target) {
+                            setTimeout(() => {
+                                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 10);
+                        }
+                        setTimeout(() => activateMenu(navLinks), 400);
+                    }
                 });
-            }
+            });
 
             // Scroll the opened accordion below the navbar once the transition finishes
             document.querySelectorAll('.collapse input[type="radio"], .collapse input[type="checkbox"]').forEach(input => {
@@ -247,8 +257,6 @@
                     if (!this.checked) return;
                     const collapseDiv = this.closest('.collapse');
                     if (!collapseDiv) return;
-                    // Wait for the CSS collapse transition to complete (DaisyUI ≈ 200ms)
-                    // then scrollIntoView respects scroll-margin-top set on .collapse
                     setTimeout(() => {
                         collapseDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }, 220);
@@ -528,7 +536,7 @@
         <!-- navbar center -->
         <div class="navbar-center">
             <div class="flex-1">
-                <h1 href="#home"> <span class="brand text-xl font-bold text-primary" id="titolo">Animazione
+                <h1><span class="brand text-xl font-bold text-primary" id="titolo">Animazione
                         Estiva</span></h1>
             </div>
         </div>
@@ -669,7 +677,7 @@
                         <h4 class="text-md md:text-lg font-semibold text-primary mb-1">Unisciti a loro!</h4>
                         <p class="text-base mb-3">
                             Ogni giorno insieme a Po e ai 5 Cicloni vivrai giochi, laboratori, sport e sorprese.<br>
-                            Chissa cosa avranno in serbo per voi... rtext-base mb-3iusciremo a proteggere la Valle della
+                            Chissà cosa avranno in serbo per voi... riusciremo a proteggere la Valle della
                             Pace?
                         </p>
 
