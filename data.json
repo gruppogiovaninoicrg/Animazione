@@ -4,7 +4,7 @@
       "titolo": "Parco degli alberi parlanti",
       "descrizione": "La Grande Gita tanto attesa! \nUna giornata intera in questo fantastico parco",
       "immagineUrl": "./img/uscite/ParcoAlberiParlanti.webp",
-      "data": "23/07/2026",
+      "data": "22/07/2026",
       "luogo": "Treviso",
       "fascia_eta": [
         "1°elementare",
@@ -465,7 +465,7 @@
       "titolo": "Calcio",
       "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
       "immagineUrl": "./img/sport/calcio.webp",
-      "data": "20/07/2026",
+      "data": "23/07/2026",
       "associazione": "NOI C.R.G."
     },
     {
@@ -506,17 +506,10 @@
       "sito_web": ""
     },
     {
-      "titolo": "Dog therapy",
+      "titolo": "Pet therapy",
       "descrizione": "",
       "immagineUrl": "",
       "data": "14/07/2026",
-      "sito_web": ""
-    },
-    {
-      "titolo": "Dog therapy",
-      "descrizione": "",
-      "immagineUrl": "",
-      "data": "22/07/2026",
       "sito_web": ""
     }
   ],
@@ -1078,8 +1071,7 @@
       "tipo": "info",
       "data_inizio": "29/06/2026",
       "data_fine": "31/07/2026"
-    }
-    ,
+    },
     {
       "testo": "La settimana del 20/07 è previsto il laboratorio \"Maglietta tie-dye\". Ricordiamo che è necessario portare una maglietta bianca da colorare se si vuole partecipare al laboratorio",
       "tipo": "warning",
