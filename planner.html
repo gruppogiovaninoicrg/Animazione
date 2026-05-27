@@ -374,8 +374,9 @@
             const startOfWeek = new Date(today);
             startOfWeek.setDate(today.getDate() - diffToMonday);
             startOfWeek.setHours(0, 0, 0, 0);
+            // FIX: la settimana finisce alla domenica (+6), non al venerdì (+4)
             const endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(startOfWeek.getDate() + 4);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
             endOfWeek.setHours(23, 59, 59, 999);
             return { startOfWeek, endOfWeek };
         }
@@ -885,19 +886,20 @@
             sortedWeeks.forEach(weekIso => {
                 const [y, m, d] = weekIso.split('-').map(Number);
                 const monday = new Date(y, m - 1, d);
-                const friday = new Date(monday);
-                friday.setDate(monday.getDate() + 4);
-                friday.setHours(23, 59, 59, 999);
+                // FIX: la settimana finisce alla domenica (+6), non al venerdì (+4)
+                const sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
+                sunday.setHours(23, 59, 59, 999);
 
                 const usciteW = usciteTot
-                    .filter(u => { const dt = parseItalianDate(u.data); return dt && dt >= monday && dt <= friday; })
+                    .filter(u => { const dt = parseItalianDate(u.data); return dt && dt >= monday && dt <= sunday; })
                     .sort((a, b) => parseItalianDate(a.data) - parseItalianDate(b.data));
 
                 const ospitiW = ospitiTot
-                    .filter(o => { const dt = parseItalianDate(o.data); return dt && dt >= monday && dt <= friday; })
+                    .filter(o => { const dt = parseItalianDate(o.data); return dt && dt >= monday && dt <= sunday; })
                     .sort((a, b) => parseItalianDate(a.data) - parseItalianDate(b.data));
 
-                const sportW = sportTot.filter(s => { const dt = parseItalianDate(s.data); return dt && dt >= monday && dt <= friday; });
+                const sportW = sportTot.filter(s => { const dt = parseItalianDate(s.data); return dt && dt >= monday && dt <= sunday; });
                 const sportUniq = [...new Map(sportW.map(s => [s.titolo, s])).values()];
 
                 const labW = laboratoriTot.filter(l => {
@@ -977,7 +979,7 @@
                         <div class="card planner-card bg-base-100 shadow-md border-0 overflow-hidden">
                             <div class="px-4 py-3 flex items-center gap-3 bg-gradient-to-r from-primary/15 to-transparent border-b border-primary/10">
                                 <span class="text-xl">📅</span>
-                                <h3 class="font-bold text-lg text-primary">Settimana ${fmtD(monday)} – ${fmtD(friday)}</h3>
+                                <h3 class="font-bold text-lg text-primary">Settimana ${fmtD(monday)} – ${fmtD(sunday)}</h3>
                                 <span class="badge badge-primary badge-sm ml-auto">${monday.getFullYear()}</span>
                             </div>
                             <div class="card-body py-3 flex flex-col gap-4">${sections}</div>
