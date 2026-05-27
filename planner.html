@@ -388,6 +388,14 @@
             return isNaN(d.getTime()) ? null : d;
         }
 
+        // Restituisce 'YYYY-MM-DD' usando l'ora locale (non UTC), evitando bug da fuso orario (es. UTC+2 Italia)
+        function localIso(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
         function findUsciteThisWeek() {
             const { startOfWeek, endOfWeek } = getWeekRange();
             return usciteTot.filter(u => {
@@ -398,10 +406,10 @@
 
         function findLaboratoriThisWeek() {
             const { startOfWeek } = getWeekRange();
-            const startIso = startOfWeek.toISOString().slice(0, 10);
+            const startIso = localIso(startOfWeek);
             return laboratoriTot.filter(l => {
                 const d = parseItalianDate(l.settimana);
-                return d && d.toISOString().slice(0, 10) === startIso;
+                return d && localIso(d) === startIso;
             });
         }
 
@@ -856,19 +864,19 @@
                 const diff = (d.getDay() + 6) % 7;
                 d.setDate(d.getDate() - diff);
                 d.setHours(0, 0, 0, 0);
-                weekSet.add(d.toISOString().slice(0, 10));
+                weekSet.add(localIso(d));
             }
 
             calendarioTot.forEach(c => {
                 const d = parseItalianDate(c.data_inizio);
-                if (d) weekSet.add(d.toISOString().slice(0, 10));
+                if (d) weekSet.add(localIso(d));
             });
             usciteTot.forEach(u => addWeekOf(parseItalianDate(u.data)));
             sportTot.forEach(s => addWeekOf(parseItalianDate(s.data)));
             ospitiTot.forEach(o => addWeekOf(parseItalianDate(o.data)));
             laboratoriTot.forEach(l => {
                 const d = parseItalianDate(l.settimana);
-                if (d) weekSet.add(d.toISOString().slice(0, 10));
+                if (d) weekSet.add(localIso(d));
             });
 
             const sortedWeeks = [...weekSet].sort();
@@ -904,7 +912,7 @@
 
                 const labW = laboratoriTot.filter(l => {
                     const dt = parseItalianDate(l.settimana);
-                    return dt && dt.toISOString().slice(0, 10) === weekIso;
+                    return dt && localIso(dt) === weekIso;
                 });
 
                 let sections = '';
