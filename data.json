@@ -388,7 +388,7 @@
       "titolo": "Pallavolo",
       "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
       "immagineUrl": "./img/sport/pallavolo.webp",
-      "data": "29/06/2026",
+      "data": "30/06/2026",
       "associazione": "Pallavolo C.R.G."
     },
     {
@@ -402,7 +402,7 @@
       "titolo": "Pallavolo",
       "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
       "immagineUrl": "./img/sport/pallavolo.webp",
-      "data": "13/07/2026",
+      "data": "14/07/2026",
       "associazione": "Pallavolo C.R.G."
     },
     {
@@ -416,14 +416,14 @@
       "titolo": "Pallavolo",
       "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
       "immagineUrl": "./img/sport/pallavolo.webp",
-      "data": "27/07/2026",
+      "data": "28/07/2026",
       "associazione": "Pallavolo C.R.G."
     },
     {
       "titolo": "Rugby",
       "descrizione": "Introduzione al rugby con esercizi di coordinazione e minipartite.",
       "immagineUrl": "./img/sport/rugby.webp",
-      "data": "29/06/2026",
+      "data": "01/07/2026",
       "associazione": "A.S.D. Rugby Villadose"
     },
     {
@@ -444,21 +444,21 @@
       "titolo": "Calcio",
       "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
       "immagineUrl": "./img/sport/calcio.webp",
-      "data": "29/06/2026",
+      "data": "03/07/2026",
       "associazione": "NOI C.R.G."
     },
     {
       "titolo": "Calcio",
       "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
       "immagineUrl": "./img/sport/calcio.webp",
-      "data": "06/07/2026",
+      "data": "10/07/2026",
       "associazione": "NOI C.R.G."
     },
     {
       "titolo": "Calcio",
       "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
       "immagineUrl": "./img/sport/calcio.webp",
-      "data": "13/07/2026",
+      "data": "15/07/2026",
       "associazione": "NOI C.R.G."
     },
     {
@@ -472,7 +472,7 @@
       "titolo": "Calcio",
       "descrizione": "Partite e tecniche di base del calcio con gli istruttori del NOI C.R.G.",
       "immagineUrl": "./img/sport/calcio.webp",
-      "data": "27/07/2026",
+      "data": "30/07/2026",
       "associazione": "NOI C.R.G."
     }
   ],
@@ -761,22 +761,22 @@
         {
           "giorno": 2,
           "el1": {
-            "testo": "Sport Pallavolo"
+            "testo": "Sport Pallavolo / Ospite pet therapy"
           },
           "el2": {
-            "testo": "Sport Pallavolo"
+            "testo": "Sport Pallavolo / Ospite pet therapy"
           },
           "el3": {
-            "testo": "Sport Pallavolo"
+            "testo": "Sport Pallavolo / Ospite pet therapy"
           },
           "el4": {
-            "testo": "Sport Pallavolo"
+            "testo": "Sport Pallavolo / Ospite pet therapy"
           },
           "el5": {
-            "testo": "Sport Pallavolo"
+            "testo": "Sport Pallavolo / Ospite pet therapy"
           },
           "md": {
-            "testo": "Sport Pallavolo"
+            "testo": "Sport Pallavolo / Ospite pet therapy"
           }
         },
         {
@@ -803,22 +803,22 @@
         {
           "giorno": 4,
           "el1": {
-            "testo": "Uscita Anni Azzurri"
+            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
           },
           "el2": {
-            "testo": "Uscita Anni Azzurri"
+            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
           },
           "el3": {
-            "testo": "Uscita Anni Azzurri"
+            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
           },
           "el4": {
-            "testo": "Uscita Castelbeach"
+            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
           },
           "el5": {
-            "testo": "Uscita Castelbeach"
+            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
           },
           "md": {
-            "testo": "Uscita Castelbeach"
+            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
           }
         },
         {
@@ -892,43 +892,43 @@
         {
           "giorno": 3,
           "el1": {
-            "testo": "Sport Calcio"
+            "testo": "Uscita Alberi Parlanti"
           },
           "el2": {
-            "testo": "Sport Calcio"
+            "testo": "Uscita Alberi Parlanti"
           },
           "el3": {
-            "testo": "Sport Calcio"
+            "testo": "Uscita Alberi Parlanti"
           },
           "el4": {
-            "testo": "Sport Calcio"
+            "testo": "Uscita Alberi Parlanti"
           },
           "el5": {
-            "testo": "Sport Calcio"
+            "testo": "Uscita Alberi Parlanti"
           },
           "md": {
-            "testo": "Sport Calcio"
+            "testo": "Uscita Alberi Parlanti"
           }
         },
         {
           "giorno": 4,
           "el1": {
-            "testo": "Uscita Alberi Parlanti"
+            "testo": "Sport Calcio"
           },
           "el2": {
-            "testo": "Uscita Alberi Parlanti"
+            "testo": "Sport Calcio"
           },
           "el3": {
-            "testo": "Uscita Alberi Parlanti"
+            "testo": "Sport Calcio"
           },
           "el4": {
-            "testo": "Uscita Alberi Parlanti"
+            "testo": "Sport Calcio"
           },
           "el5": {
-            "testo": "Uscita Alberi Parlanti"
+            "testo": "Sport Calcio"
           },
           "md": {
-            "testo": "Uscita Alberi Parlanti"
+            "testo": "Sport Calcio"
           }
         },
         {
@@ -1067,7 +1067,7 @@
   ],
   "comunicazioniTot": [
     {
-      "testo": "Ricordiamo che per partecipare alle varie uscite è necessario consegnare il tagliandino firmato",
+      "testo": "Ricordiamo che per partecipare alle varie uscite è necessario consegnare il tagliandino firmato da entrambi i genitori",
       "tipo": "info",
       "data_inizio": "29/06/2026",
       "data_fine": "31/07/2026"
@@ -1077,6 +1077,12 @@
       "tipo": "warning",
       "data_inizio": "13/07/2026",
       "data_fine": "24/07/2026"
+    },
+    {
+      "testo": "Il giorno 13 - 07 è previsto il laboratorio di cucina",
+      "tipo": "warning",
+      "data_inizio": "06/07/2026",
+      "data_fine": "13/07/2026"
     }
   ]
 }
