@@ -1083,6 +1083,12 @@
       "tipo": "warning",
       "data_inizio": "06/07/2026",
       "data_fine": "13/07/2026"
+    },
+    {
+      "testo": "Il giorno 17 - 07 Sono previsti i giochi d'acqua",
+      "tipo": "error",
+      "data_inizio": "13/07/2026",
+      "data_fine": "17/07/2026"
     }
   ]
 }
