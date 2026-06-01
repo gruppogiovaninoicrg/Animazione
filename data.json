@@ -481,6 +481,27 @@
       "immagineUrl": "./img/sport/calcio.webp",
       "data": "30/07/2026",
       "associazione": "NOI C.R.G."
+    },
+    {
+      "titolo": "Yoga",
+      "descrizione": "",
+      "immagineUrl": "",
+      "data": "01/07/2026",
+      "associazione": ""
+    },
+    {
+      "titolo": "Yoga",
+      "descrizione": "",
+      "immagineUrl": "",
+      "data": "23/07/2026",
+      "associazione": ""
+    },
+    {
+      "titolo": "Yoga",
+      "descrizione": "",
+      "immagineUrl": "",
+      "data": "27/07/2026",
+      "associazione": ""
     }
   ],
   "ospitiTot": [
