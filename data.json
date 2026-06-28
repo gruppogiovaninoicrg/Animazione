@@ -60,11 +60,18 @@
       "immagineUrl": "./img/uscite/DiamanteNero.webp",
       "data": "03/07/2026",
       "luogo": "Ca' Emo",
-      "fascia_eta": [],
+      "fascia_eta": [
+        "1°elementare",
+        "2°elementare",
+        "3°elementare",
+        "4°elementare",
+        "5°elementare",
+        "medie"
+      ],
       "sito_web": "",
       "data_apertura_iscrizione": "29/06/2026",
       "data_chiusura_iscrizione": "02/07/2026",
-      "link_autorizzazione": ""
+      "link_autorizzazione": "https://drive.google.com/file/d/1pGgwRUEkx9soS0R6AfNjih4ZsMSicLNu/view?usp=sharing"
     },
     {
       "titolo": "Anni Azzurri",
