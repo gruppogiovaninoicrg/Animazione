@@ -20,22 +20,6 @@
       "link_autorizzazione": "https://drive.google.com/file/d/1uCayYpmMdJ-XXRg3gm1JdNNGblilHDO2/view?usp=drive_link"
     },
     {
-      "titolo": "Pompieri",
-      "descrizione": "Incontro educativo con i vigili del fuoco per imparare la sicurezza antincendio e il pronto soccorso.",
-      "immagineUrl": "./img/uscite/pompieri.webp",
-      "data": "15/07/2026",
-      "luogo": "Caserma Vigili del Fuoco – Rovigo",
-      "fascia_eta": [
-        "1°elementare",
-        "2°elementare",
-        "3°elementare"
-      ],
-      "sito_web": "https://www.vigilfuoco.it",
-      "data_apertura_iscrizione": "07/07/2026",
-      "data_chiusura_iscrizione": "14/07/2026",
-      "link_autorizzazione": "https://drive.google.com/file/d/1uCayYpmMdJ-XXRg3gm1JdNNGblilHDO2/view?usp=drive_link"
-    },
-    {
       "titolo": "Castelbeach",
       "descrizione": "Una giornata al parco acquatico tra scivoli, giochi e tanto divertimento sotto il sole.",
       "immagineUrl": "./img/uscite/Castelbeach.webp",
@@ -395,13 +379,6 @@
       "titolo": "Pallavolo",
       "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
       "immagineUrl": "./img/sport/pallavolo.webp",
-      "data": "30/06/2026",
-      "associazione": "Pallavolo C.R.G."
-    },
-    {
-      "titolo": "Pallavolo",
-      "descrizione": "Allenamento e partite di pallavolo per tutti i livelli con l'associazione migliore che conosciamo",
-      "immagineUrl": "./img/sport/pallavolo.webp",
       "data": "06/07/2026",
       "associazione": "Pallavolo C.R.G."
     },
@@ -509,7 +486,7 @@
       "titolo": "Trinity Music School",
       "descrizione": "Scuola di musica di Rovigo",
       "immagineUrl": "./img/ospiti/trinity.webp",
-      "data": "07/07/2026",
+      "data": "15/07/2026",
       "sito_web": "https://www.trinitycollege.com"
     },
     {
@@ -569,64 +546,64 @@
         {
           "giorno": 2,
           "el1": {
-            "testo": "Sport Pallavolo"
+            "testo": "Giornata tipo"
           },
           "el2": {
-            "testo": "Sport Pallavolo"
+            "testo": "Giornata tipo"
           },
           "el3": {
-            "testo": "Sport Pallavolo"
+            "testo": "Giornata tipo"
           },
           "el4": {
-            "testo": "Sport Pallavolo"
+            "testo": "Giornata tipo"
           },
           "el5": {
-            "testo": "Sport Pallavolo"
+            "testo": "Giornata tipo"
           },
           "md": {
-            "testo": "Sport Pallavolo"
+            "testo": "Giornata tipo"
           }
         },
         {
           "giorno": 3,
           "el1": {
-            "testo": "Sport Rugby"
+            "testo": "Attività Storia"
           },
           "el2": {
-            "testo": "Sport Rugby"
+            "testo": "Attività Storia"
           },
           "el3": {
-            "testo": "Sport Rugby"
+            "testo": "Attività Storia"
           },
           "el4": {
-            "testo": "Sport Rugby"
+            "testo": "Attività Storia"
           },
           "el5": {
-            "testo": "Sport Rugby"
+            "testo": "Attività Storia"
           },
           "md": {
-            "testo": "Sport Rugby"
+            "testo": "Attività Storia"
           }
         },
         {
           "giorno": 4,
           "el1": {
-            "testo": "Attività Storia"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "el2": {
-            "testo": "Attività Storia"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "el3": {
-            "testo": "Attività Storia"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "el4": {
-            "testo": "Attività Storia"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "el5": {
-            "testo": "Attività Storia"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "md": {
-            "testo": "Attività Storia"
+            "testo": "Sport Rugby / Sport Yoga"
           }
         },
         {
@@ -664,7 +641,7 @@
             "testo": "Sport Pallavolo / Uscita Anni Azzurri"
           },
           "el3": {
-            "testo": "Sport Pallavolo / Uscita Anni Azzurri"
+            "testo": "Sport Pallavolo"
           },
           "el4": {
             "testo": "Sport Pallavolo"
@@ -679,22 +656,22 @@
         {
           "giorno": 2,
           "el1": {
-            "testo": "Ospite Trinity Musich School"
+            "testo": "Giornata tipo"
           },
           "el2": {
-            "testo": "Ospite Trinity Musich School"
+            "testo": "Giornata tipo"
           },
           "el3": {
-            "testo": "Ospite Trinity Musich School"
+            "testo": "Giornata tipo"
           },
           "el4": {
-            "testo": "Ospite Trinity Musich School"
+            "testo": "Giornata tipo"
           },
           "el5": {
-            "testo": "Ospite Trinity Musich School"
+            "testo": "Giornata tipo"
           },
           "md": {
-            "testo": "Ospite Trinity Musich School"
+            "testo": "Giornata tipo"
           }
         },
         {
@@ -810,43 +787,43 @@
         {
           "giorno": 3,
           "el1": {
-            "testo": "Sport Calcio / Uscita Pompieri"
+            "testo": "Sport Calcio / Ospite trinity Music School"
           },
           "el2": {
-            "testo": "Sport Calcio / Uscita Pompieri"
+            "testo": "Sport Calcio / Ospite trinity Music School"
           },
           "el3": {
-            "testo": "Sport Calcio / Uscita Pompieri"
+            "testo": "Sport Calcio / Ospite trinity Music School"
           },
           "el4": {
-            "testo": "Sport Calcio"
+            "testo": "Sport Calcio / Ospite trinity Music School"
           },
           "el5": {
-            "testo": "Sport Calcio"
+            "testo": "Sport Calcio / Ospite trinity Music School"
           },
           "md": {
-            "testo": "Sport Calcio"
+            "testo": "Sport Calcio / Ospite trinity Music School"
           }
         },
         {
           "giorno": 4,
           "el1": {
-            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
+            "testo": "Uscita Anni Azzurri"
           },
           "el2": {
-            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
+            "testo": "Uscita Anni Azzurri"
           },
           "el3": {
-            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
+            "testo": "Giornata Tipo"
           },
           "el4": {
-            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
+            "testo": "Uscita Castelbeach"
           },
           "el5": {
-            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
+            "testo": "Uscita Castelbeach"
           },
           "md": {
-            "testo": "Uscita Anni Azzurri / Uscita Castelbeach"
+            "testo": "Uscita Castelbeach"
           }
         },
         {
@@ -941,22 +918,22 @@
         {
           "giorno": 4,
           "el1": {
-            "testo": "Sport Calcio"
+            "testo": "Sport Calcio / Sport Yoga"
           },
           "el2": {
-            "testo": "Sport Calcio"
+            "testo": "Sport Calcio / Sport Yoga"
           },
           "el3": {
-            "testo": "Sport Calcio"
+            "testo": "Sport Calcio / Sport Yoga"
           },
           "el4": {
-            "testo": "Sport Calcio"
+            "testo": "Sport Calcio / Sport Yoga"
           },
           "el5": {
-            "testo": "Sport Calcio"
+            "testo": "Sport Calcio / Sport Yoga"
           },
           "md": {
-            "testo": "Sport Calcio"
+            "testo": "Sport Calcio / Sport Yoga"
           }
         },
         {
@@ -988,22 +965,22 @@
         {
           "giorno": 1,
           "el1": {
-            "testo": "Sport Rugby"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "el2": {
-            "testo": "Sport Rugby"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "el3": {
-            "testo": "Sport Rugby"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "el4": {
-            "testo": "Sport Rugby"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "el5": {
-            "testo": "Sport Rugby"
+            "testo": "Sport Rugby / Sport Yoga"
           },
           "md": {
-            "testo": "Sport Rugby"
+            "testo": "Sport Rugby / Sport Yoga"
           }
         },
         {
